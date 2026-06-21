@@ -1,0 +1,786 @@
+# Copyright (C) 2026 Kitgenix
+# This file is distributed under the GPLv3 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Kitgenix Custom Tabs for WooCommerce 1.1.3\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/kitgenix-custom-tabs-for-woocommerce\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-05-26T19:44:53+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: kitgenix-custom-tabs-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+#: kitgenix-custom-tabs-for-woocommerce.php
+#: includes/Admin/Settings_UI.php:60
+#: includes/Admin/Settings_UI.php:178
+msgid "Kitgenix Custom Tabs for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: kitgenix-custom-tabs-for-woocommerce.php
+msgid "https://wordpress.org/plugins/kitgenix-custom-tabs-for-woocommerce/"
+msgstr ""
+
+#. Description of the plugin
+#: kitgenix-custom-tabs-for-woocommerce.php
+#: kitgenix-custom-tabs-for-woocommerce.php:437
+msgid "Add custom WooCommerce product tabs with per-product content, global tabs, and lightweight controls."
+msgstr ""
+
+#. Author of the plugin
+#: kitgenix-custom-tabs-for-woocommerce.php
+#: includes/Admin/Settings_UI.php:177
+#: kitgenix-custom-tabs-for-woocommerce.php:116
+#: kitgenix-custom-tabs-for-woocommerce.php:117
+#: kitgenix-custom-tabs-for-woocommerce.php:504
+msgid "Kitgenix"
+msgstr ""
+
+#. Author URI of the plugin
+#: kitgenix-custom-tabs-for-woocommerce.php
+msgid "https://kitgenix.com/"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:35
+#: includes/Admin/Settings_UI.php:61
+msgid "Custom Tabs"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:112
+#: includes/Admin/Settings_UI.php:134
+msgid "Remove this tab?"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:113
+msgid "You have reached the maximum number of tabs for this product."
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:114
+#: includes/Admin/Settings_UI.php:136
+msgid "Please enter a tab title."
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:115
+#: includes/Admin/Settings_UI.php:137
+msgid "Please enter tab content."
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:116
+#: includes/Admin/Settings_UI.php:138
+msgid "Duplicate"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:117
+#: includes/Admin/Settings_UI.php:139
+msgid "Choose a saved template"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:118
+#: includes/Admin/Settings_UI.php:140
+msgid "Insert template"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:119
+#: includes/Admin/Settings_UI.php:141
+msgid "Template library"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:120
+#: includes/Admin/Settings_UI.php:142
+msgid "Copy"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:138
+msgid "No custom tabs yet. Click Add new tab to create one."
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:152
+msgid "Custom tabs"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:156
+msgid "Tab settings"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:160
+#: includes/Admin/Settings_UI.php:210
+msgid "Templates"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:164
+msgid "Help & FAQ"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:168
+msgid "Global tabs"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:172
+msgid "Add new tab"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:179
+msgid "Add product-specific tabs. These will appear on the product page tabs area."
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:182
+msgid "Use saved templates for repeated snippets like sizing guides, warranty terms, ingredients, or care instructions, then duplicate a tab whenever a product only needs a quick variation."
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:185
+msgid "Tip: Global tabs that apply to every product can be managed under Kitgenix → Custom Tabs → Global Tabs."
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:200
+#: includes/Admin/Settings_UI.php:384
+msgid "Tab"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:201
+#: includes/Admin/Settings_UI.php:385
+#: includes/Admin/Settings_UI.php:463
+msgid "Slug"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:202
+#: includes/Admin/Settings_UI.php:386
+#: includes/Admin/Settings_UI.php:464
+msgid "Position"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:203
+#: includes/Admin/Settings_UI.php:387
+#: includes/Admin/Settings_UI.php:465
+msgid "Actions"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:248
+#: includes/Admin/Settings_UI.php:508
+msgid "Untitled"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:260
+#: includes/Admin/Settings_UI.php:520
+msgid "Edit"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:261
+#: includes/Admin/Settings_UI.php:521
+msgid "Remove"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:285
+#: includes/Admin/Settings_UI.php:591
+msgid "Edit Tab"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:286
+#: includes/Admin/Settings_UI.php:592
+msgid "Close"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:294
+#: includes/Admin/Settings_UI.php:600
+msgid "Tab title"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:295
+#: includes/Admin/Settings_UI.php:601
+msgid "Title for tab"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:299
+#: includes/Admin/Settings_UI.php:605
+msgid "Tab position"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:302
+#: includes/Admin/Settings_UI.php:608
+msgid "Learn about positioning"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:306
+#: includes/Admin/Settings_UI.php:612
+msgid "Tab content"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:311
+#: includes/Admin/Settings_UI.php:617
+msgid "Tab nickname (optional)"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:312
+#: includes/Admin/Settings_UI.php:618
+msgid "Nickname for tab"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:315
+#: includes/Admin/Product_Tabs.php:317
+#: includes/Admin/Settings_UI.php:621
+#: includes/Admin/Settings_UI.php:623
+msgid "Tab slug"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:318
+#: includes/Admin/Settings_UI.php:624
+msgid "Generate from title"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:320
+#: includes/Admin/Settings_UI.php:626
+msgid "Allowed: letters, numbers, and hyphens."
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:327
+#: includes/Admin/Settings_UI.php:633
+msgid "Cancel"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:328
+#: includes/Admin/Settings_UI.php:634
+msgid "Done"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:135
+msgid "You have reached the maximum number of tabs."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:180
+msgid "Add product-specific custom tabs from the WooCommerce product editor. Built to stay fast and modular as we add more features."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:187
+#: includes/Admin/Settings_UI.php:257
+msgid "Documentation"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:188
+msgid "Review Plugin"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:189
+msgid "Support Request"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:190
+#: includes/Admin/Settings_UI.php:708
+msgid "Support Kitgenix"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:209
+#: kitgenix-custom-tabs-for-woocommerce.php:687
+msgid "Settings"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:211
+#: includes/Admin/Settings_UI.php:368
+msgid "Global Tabs"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:212
+msgid "Support"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:213
+msgid "Log"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:251
+msgid "Help and links"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:254
+msgid "Need Help?"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:255
+msgid "Open the documentation for setup guidance or send us a support request if you need help configuring the plugin."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:258
+msgid "Request Support"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:263
+msgid "Visit Our Official Facebook Group"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:264
+msgid "Join the Kitgenix community to ask questions, share feedback, and keep up with product updates."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:266
+msgid "Join Group"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:271
+msgid "Follow Us"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:272
+msgid "Keep up with new releases, tutorials, and product news across our channels."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:303
+msgid "General"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:306
+msgid "Enable custom tabs"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:308
+msgid "Enable the custom tabs feature"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:311
+#: includes/Admin/Settings_UI.php:681
+msgid "Max tabs per product"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:313
+msgid "Keeps the product editor fast and prevents accidental huge tab lists."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:316
+msgid "Allow shortcodes"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:318
+msgid "Process shortcodes in tab content on the frontend"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:321
+msgid "Default Tab Position"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:323
+msgid "This value will be auto-filled into the tab position field when creating a new tab."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:324
+msgid "Learn more about arranging tabs"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:326
+msgid "Before description tab"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:327
+msgid "In between Description and Additional Information"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:328
+msgid "In between Additional Information and Reviews"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:329
+msgid "After all default tabs"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:330
+msgid "Custom"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:332
+msgid "Enter a custom position value or choose one of the options above."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:337
+msgid "Default priority step"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:339
+msgid "Each new tab will use base + (index × step) if no priority is set."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:342
+msgid "Hide Tab Heading Inside the Tab"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:344
+msgid "Yes"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:349
+#: includes/Admin/Settings_UI.php:425
+#: includes/Admin/Settings_UI.php:503
+msgid "Save Settings"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:361
+msgid "No global tabs yet. Click Add Tab to create one."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:369
+msgid "These tabs are added to every product. Product-specific tabs (set in the product editor) are added in addition to these."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:379
+msgid "Add Tab"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:437
+msgid "No saved templates yet. Click Add template to create a reusable tab snippet."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:444
+msgid "Tab Templates"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:445
+msgid "Save reusable warranty text, sizing guides, ingredient lists, care instructions, and other snippets here. Product editors and global tabs can then insert these templates in one click and customize them per use."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:455
+msgid "Add template"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:456
+msgid "Templates are editable copies. Inserting one into a product or global tab does not change the saved template."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:462
+msgid "Template"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:659
+msgid "Copy plugin link:"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:661
+msgid "Kitgenix Supporter (£4/month)"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:662
+msgid "Kitgenix Plus (£8/month)"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:663
+msgid "Kitgenix Pro Supporter (£19/month)"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:664
+msgid "Kitgenix Agency (£37/month)"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:665
+msgid "Kitgenix Partner (£75/month)"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:666
+msgid "Kitgenix YouTube Sponsor (£730/month)"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:671
+msgid "Products with custom tabs"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:673
+msgid "Products currently enhanced with extra content tabs."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:676
+msgid "Total custom tabs"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:678
+msgid "Extra product content blocks already configured across the catalog."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:683
+msgid "The current editorial limit available to each product editor."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:687
+msgid "You already have products using richer custom content beyond the default WooCommerce tabs."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:688
+msgid "The total tab count shows how much extra product information your catalog is serving to shoppers."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:689
+msgid "Your max-tab limit controls how much editorial flexibility each product editor gets."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:692
+msgid "Compatibility updates for new WordPress / WooCommerce releases"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:693
+msgid "Bug fixes, edge-case testing, and better product-tab coverage"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:694
+msgid "Security hardening and ongoing performance improvements"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:695
+msgid "Documentation upgrades and faster, clearer support responses"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:698
+msgid "No paid features locked behind donations"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:699
+msgid "No tracking or invasive upsells"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:700
+msgid "Support is always optional, and genuinely appreciated."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:707
+msgid "Help keep Kitgenix independent"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:709
+msgid "We try to keep Kitgenix plugins lightweight, privacy-friendly, and free for everyone. If Custom Tabs for WooCommerce saves you admin time or helps customers find product information faster, please consider supporting Kitgenix. Your support directly funds ongoing development, testing, and maintenance so we can keep features open and updates frequent."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:712
+msgid "Support this plugin"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:714
+msgid "Buy Me a Coffee"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:715
+msgid "Become a member"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:717
+msgid "Via Buy Me a Coffee. Cancel anytime."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:723
+msgid "Your site impact"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:724
+msgid "These stats show how Custom Tabs for WooCommerce is currently working on your site:"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:739
+msgid "Support options"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:740
+msgid "Buy Me a Coffee: A quick way to say thanks and help fund the next round of improvements."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:741
+msgid "A membership helps keep development consistent if this plugin is part of your day-to-day merchandising workflow."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:764
+msgid "What this means"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:773
+msgid "What your support helps with"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:782
+msgid "Not in a position to donate?"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:783
+msgid "No worries - you can still massively help:"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:784
+msgid "Reviews help others discover the plugin and keep the project sustainable. Sharing the plugin with store owners who want cleaner product pages and sending strong feature reports both help move the roadmap forward."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:786
+msgid "Leave a WordPress.org review"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:787
+msgid "Copy plugin link"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:788
+msgid "Open support / feature request"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:793
+msgid "A small note on trust & privacy"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:799
+msgid "Thank you for supporting Kitgenix."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:869
+msgid "Event log cleared."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:878
+msgid "Activity Log"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:879
+msgid "A record of recent plugin events. Entries show the timestamp, context, outcome, and a plain-English note. IP addresses and sensitive data are never stored here."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:882
+msgid "Clear all log entries?"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:882
+msgid "Clear log"
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:889
+msgid "Permission denied."
+msgstr ""
+
+#: includes/Admin/Settings_UI.php:898
+msgid "Plugin settings were saved via the admin settings page."
+msgstr ""
+
+#: includes/Core/Event_Log.php:64
+msgid "No recent events recorded yet."
+msgstr ""
+
+#: includes/Core/Event_Log.php:80
+msgid "Unknown time"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:413
+msgid "Sorry, you are not allowed to access this page."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:425
+msgid "CAPTCHA for Cloudflare Turnstile"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:429
+msgid "Add Cloudflare Turnstile CAPTCHA to WordPress, WooCommerce, Elementor, and popular form plugins."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:433
+msgid "Custom Tabs for WooCommerce"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:441
+msgid "Document Manager"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:445
+msgid "Manage document downloads with stable links, version history, and private file access."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:449
+msgid "Order Tracking for WooCommerce"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:453
+msgid "Add WooCommerce order tracking, multi-shipment support, email tracking links, and a public customer tracking page."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:457
+msgid "PDF Invoicing for WooCommerce"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:461
+msgid "Generate WooCommerce PDF invoices, receipts, packing slips, and credit notes with secure downloads and configurable email attachments."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:465
+msgid "Stock Sync for WooCommerce"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:469
+msgid "Sync WooCommerce stock between stores with secure master-child inventory updates and signed REST requests."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:473
+msgid "MultiStore Sync"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:477
+msgid "Sync WooCommerce products, prices, media, and metadata between multiple stores with a secure master-child architecture."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:481
+msgid "Affiliate Link Manager"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:485
+msgid "Manage affiliate short links, branded redirects, and click tracking from one WordPress dashboard."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:506
+msgid "Discover and manage every Kitgenix plugin from one screen."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:507
+msgid "Install, activate, open, and review Kitgenix plugins."
+msgstr ""
+
+#. translators: %s is the number of active installs and may include a thousands separator, e.g. "1,234". The "+" suffix is literal.
+#: kitgenix-custom-tabs-for-woocommerce.php:545
+#, php-format
+msgid "%s+ installs"
+msgstr ""
+
+#. translators: %s is the average rating out of 5 with one decimal place, e.g. "4.5". The star symbol (★) precedes the number.
+#: kitgenix-custom-tabs-for-woocommerce.php:554
+#, php-format
+msgid "★ %s/5"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:559
+msgid "Not installed"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:561
+msgid "Active"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:563
+msgid "Installed (Inactive)"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:583
+msgid "Install"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:590
+msgid "Activate"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:592
+msgid "You do not have permission to activate plugins."
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:597
+msgid "Open"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:602
+msgid "Details"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:606
+msgid "Review"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:607
+msgid "Support Forum"
+msgstr ""
+
+#: kitgenix-custom-tabs-for-woocommerce.php:643
+msgid "Kitgenix Custom Tabs for WooCommerce requires WooCommerce to be installed and active. The plugin has been deactivated."
+msgstr ""

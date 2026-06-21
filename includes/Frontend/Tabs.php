@@ -1,0 +1,125 @@
+<?php
+
+declare(strict_types=1);
+
+namespace KitgenixCustomTabsForWooCommerce\Frontend;
+
+defined( 'ABSPATH' ) || exit;
+
+use KitgenixCustomTabsForWooCommerce\Core\Settings;
+
+final class Tabs {
+	private const META_KEY = 'kitgenix_custom_tabs_for_woocommerce_tabs';
+
+	public static function init(): void {
+		add_filter( 'woocommerce_product_tabs', [ self::class, 'inject_tabs' ], 20 );
+	}
+
+	/**
+	 * @param array<string,mixed> $tabs
+	 * @return array<string,mixed>
+	 */
+	public static function inject_tabs( array $tabs ): array {
+		if ( ! Settings::enabled() ) {
+			return $tabs;
+		}
+
+		global $product;
+		if ( ! $product || ! is_a( $product, \WC_Product::class ) ) {
+			return $tabs;
+		}
+
+		$product_id = (int) $product->get_id();
+		if ( $product_id <= 0 ) {
+			return $tabs;
+		}
+
+		$base = Settings::priority_base();
+		$step = Settings::priority_step();
+
+		$idx = 0;
+
+		$global = Settings::global_tabs();
+		if ( is_array( $global ) && ! empty( $global ) ) {
+			self::add_rows_to_tabs( $tabs, $global, $idx, $base, $step );
+		}
+
+		$stored = get_post_meta( $product_id, self::META_KEY, true );
+		if ( is_array( $stored ) && ! empty( $stored ) ) {
+			self::add_rows_to_tabs( $tabs, $stored, $idx, $base, $step );
+		}
+
+		return $tabs;
+	}
+
+	/**
+	 * @param array<string,mixed> $tabs
+	 * @param array<int,mixed> $rows
+	 */
+	private static function add_rows_to_tabs( array &$tabs, array $rows, int &$idx, int $base, int $step ): void {
+		foreach ( $rows as $row ) {
+			if ( ! is_array( $row ) ) {
+				continue;
+			}
+
+			$title   = isset( $row['title'] ) ? (string) $row['title'] : '';
+			$content = isset( $row['content'] ) ? (string) $row['content'] : '';
+			$slug    = isset( $row['slug'] ) ? (string) $row['slug'] : '';
+
+			if ( $title === '' || $content === '' ) {
+				continue;
+			}
+
+			$sanitized_slug = $slug !== '' ? sanitize_key( $slug ) : '';
+			$key_base       = $sanitized_slug !== '' ? 'kitgenix_custom_tabs_for_woocommerce_tab_' . $sanitized_slug : 'kitgenix_custom_tabs_for_woocommerce_tab_' . (string) $idx;
+			$key            = $key_base;
+			$dupe           = 2;
+			while ( isset( $tabs[ $key ] ) ) {
+				$key = $key_base . '_' . (string) $dupe;
+				$dupe++;
+			}
+
+			$priority = 0;
+			if ( isset( $row['priority'] ) ) {
+				$priority = absint( $row['priority'] );
+			}
+			if ( $priority <= 0 ) {
+				$priority = Settings::compute_priority_for_index( $base, $step, $idx );
+			}
+
+			$tabs[ $key ] = [
+				'title'           => $title,
+				'priority'        => $priority,
+				'callback'        => [ self::class, 'render_tab' ],
+				'kitgenix_content' => $content,
+				'kitgenix_title'   => $title,
+			];
+
+			$idx++;
+		}
+	}
+
+	/**
+	 * @param string $key
+	 * @param array<string,mixed> $tab
+	 */
+	public static function render_tab( string $key, array $tab ): void {
+		$content = isset( $tab['kitgenix_content'] ) ? (string) $tab['kitgenix_content'] : '';
+		if ( $content === '' ) {
+			return;
+		}
+
+		if ( ! Settings::hide_tab_heading() ) {
+			$title = isset( $tab['kitgenix_title'] ) ? (string) $tab['kitgenix_title'] : '';
+			if ( $title !== '' ) {
+				echo '<h2 class="woocommerce-Tabs-panel__title">' . esc_html( $title ) . '</h2>';
+			}
+		}
+
+		if ( Settings::allow_shortcodes() ) {
+			$content = do_shortcode( $content );
+		}
+
+		echo wp_kses_post( wpautop( $content ) );
+	}
+}
