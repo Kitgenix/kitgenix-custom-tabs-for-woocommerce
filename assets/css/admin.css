@@ -1,6 +1,11 @@
 /* ==========================================================================
-   Kitgenix Custom Tabs For WooCommerce/kitgenix-custom-tabs-for-woocommerce
+   Kitgenix Custom Tabs For WooCommerce
+   Plugin-specific admin CSS. Rebuilt to sit on top of the shared
+   kitgenix-admin-ui.css component library (cards, settings rows, toggles,
+   tables, empty states, notices, badges, stat tiles, modal, button groups).
+   Only plugin-specific structural/functional classes live here.
    ========================================================================== */
+
 /* ----------------------------------------------------------------
   Page app wrapper & scoped tokens
   (namespace prevents bleed into WC product meta box on same page)
@@ -8,47 +13,13 @@
 #kitgenix-custom-tabs-for-woocommerce-admin-app {
   width: 100%;
   max-width: 1240px;
-  /* Re-scope tokens using the plugin namespace so WC product screen
-     inheriting :root doesn't change when this plugin is active */
-  --kitgenix-custom-tabs-for-woocommerce-brand: var(--kitgenix-brand);
-  --kitgenix-custom-tabs-for-woocommerce-surface: var(--kitgenix-surface);
-  --kitgenix-custom-tabs-for-woocommerce-surface-alt: var(--kitgenix-surface-alt);
-  --kitgenix-custom-tabs-for-woocommerce-border-color: var(--kitgenix-border-color);
-  --kitgenix-custom-tabs-for-woocommerce-radius: var(--kitgenix-radius);
-  --kitgenix-custom-tabs-for-woocommerce-shadow: var(--kitgenix-shadow);
 }
 
 /* ----------------------------------------------------------------
-  Settings card (scoped alias used by PHP template)
+  Manager toolbar (Add Tab button row / template picker row)
 ----------------------------------------------------------------- */
-#kitgenix-custom-tabs-for-woocommerce-admin-app .kitgenix-custom-tabs-for-woocommerce-card {
-  background: var(--kitgenix-surface);
-  border: 1px solid var(--kitgenix-border-color);
-  border-radius: var(--kitgenix-radius);
-  box-shadow: var(--kitgenix-shadow);
-  padding: var(--kitgenix-pad-y) var(--kitgenix-pad-x);
-  margin-bottom: var(--kitgenix-gap);
-}
-
-#kitgenix-custom-tabs-for-woocommerce-admin-app .kitgenix-custom-tabs-for-woocommerce-card.kitgenix-support-page {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  padding: 0;
-  margin-bottom: 0;
-}
-
-#kitgenix-custom-tabs-for-woocommerce-admin-app .kitgenix-custom-tabs-for-woocommerce-card > h3 {
-  margin: 0 0 14px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--kitgenix-heading);
-  letter-spacing: -0.01em;
-}
-
-/* Manager layout */
 #kitgenix-custom-tabs-for-woocommerce-admin-app .kitgenix-custom-tabs-for-woocommerce-manager-actions {
-  margin: 10px 0;
+  margin: 0 0 14px;
 }
 
 #kitgenix-custom-tabs-for-woocommerce-admin-app .kitgenix-custom-tabs-for-woocommerce-toolbar {
@@ -57,7 +28,7 @@
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  margin: 10px 0 0;
+  margin: 0 0 14px;
 }
 
 #kitgenix-custom-tabs-for-woocommerce-admin-app .kitgenix-custom-tabs-for-woocommerce-toolbar__label {
@@ -81,62 +52,16 @@
 }
 
 #kitgenix-custom-tabs-for-woocommerce-admin-app .kitgenix-custom-tabs-for-woocommerce-manager-table {
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
 /* ----------------------------------------------------------------
-  Scoped table / tab list (Global Tabs tab)
+  Tab / template list table extras
+  (base table look now comes from the shared .kitgenix-table classes;
+  these rules only add plugin-specific bits the shared table doesn't know.)
 ----------------------------------------------------------------- */
-.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-table-wrap {
-  width: 100%;
-  overflow: auto;
-  border-radius: var(--kitgenix-radius);
-  border: 1px solid var(--kitgenix-border-color);
-}
-
-.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-table-wrap table {
-  min-width: 760px;
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-table-wrap table thead th {
-  background: var(--kitgenix-surface-alt);
-  border-bottom: 1px solid var(--kitgenix-border-color);
-  padding: 10px 14px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--kitgenix-text-muted);
-  text-align: left;
-}
-
-.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-table-wrap table tbody tr {
-  border-bottom: 1px solid var(--kitgenix-border-color);
-  transition: background var(--kitgenix-transition-fast);
-}
-
-.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-table-wrap table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-table-wrap table tbody tr:hover {
-  background: color-mix(in srgb, var(--kitgenix-brand) 4%, var(--kitgenix-surface));
-}
-
-.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-table-wrap table td {
-  padding: 10px 14px;
-  vertical-align: middle;
-}
-
-.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-empty-row > td,
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-empty-cell {
-  padding: 32px 14px;
-  text-align: center;
-  color: var(--kitgenix-text-muted);
-  font-size: 13px;
+  padding: 0 !important;
 }
 
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-tabs-fields-wrap {
@@ -147,7 +72,7 @@
   display: inline-block;
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   font-size: 12px;
-  background: var(--kitgenix-surface-alt);
+  background: var(--kitgenix-bg-light, var(--kitgenix-surface-alt));
   border: 1px solid var(--kitgenix-border-color);
   border-radius: 4px;
   padding: 2px 7px;
@@ -155,12 +80,16 @@
 }
 
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
   white-space: nowrap;
 }
 
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-actions .button {
-  margin: 0 6px 0 0;
-  font-size: 13px;
+  margin: 0;
+  font-size: 12px;
 }
 
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-tabs-subtitle {
@@ -174,10 +103,10 @@
 }
 
 /* ----------------------------------------------------------------
-  Modal scope (WC Backbone modal / shared kitgenix modal)
+  Modal field grid (content inside the shared .kitgenix-modal-body)
 ----------------------------------------------------------------- */
 .kitgenix-custom-tabs-for-woocommerce-modal-scope {
-  padding: 12px 0;
+  padding: 4px 0;
   color: var(--kitgenix-text-color) !important;
   -webkit-text-fill-color: currentColor !important;
 }
@@ -185,7 +114,8 @@
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-modal-grid,
 .kitgenix-custom-tabs-for-woocommerce-modal-scope .kitgenix-custom-tabs-for-woocommerce-modal-grid {
   display: grid;
-  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-is-full,
@@ -197,7 +127,7 @@
 .kitgenix-custom-tabs-for-woocommerce-modal-scope .kitgenix-custom-tabs-for-woocommerce-field {
   display: grid;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 0;
 }
 
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-field__inline,
@@ -210,7 +140,7 @@
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-field__inline .regular-text,
 .kitgenix-custom-tabs-for-woocommerce-modal-scope .kitgenix-custom-tabs-for-woocommerce-field__inline .regular-text {
   flex: 1;
-  min-width: 220px;
+  min-width: 160px;
 }
 
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-field label,
@@ -227,7 +157,7 @@
   min-height: 16px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--kitgenix-error);
+  color: var(--kitgenix-danger, #EF4444);
 }
 
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-field__hint,
@@ -237,12 +167,33 @@
   line-height: 1.4;
 }
 
+/* Overrides the generic uppercase/muted .field label styling above for a
+   plain checkbox + caption pairing (e.g. "Hide title inside tab content"). */
+.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-field__checkbox,
+.kitgenix-custom-tabs-for-woocommerce-modal-scope .kitgenix-custom-tabs-for-woocommerce-field__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--kitgenix-text-color, #1d2327);
+  cursor: pointer;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-field__checkbox input[type="checkbox"],
+.kitgenix-custom-tabs-for-woocommerce-modal-scope .kitgenix-custom-tabs-for-woocommerce-field__checkbox input[type="checkbox"] {
+  margin: 0;
+}
+
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-modal__help-link,
 .kitgenix-custom-tabs-for-woocommerce-modal-scope .kitgenix-custom-tabs-for-woocommerce-modal__help-link {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   text-decoration: none;
   color: var(--kitgenix-brand);
+  white-space: nowrap;
 }
 
 .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-modal__help-link:hover,
@@ -251,6 +202,160 @@
 .kitgenix-custom-tabs-for-woocommerce-modal-scope .kitgenix-custom-tabs-for-woocommerce-modal__help-link:focus-visible {
   text-decoration: underline;
   outline: none;
+}
+
+@media screen and (max-width: 640px) {
+  .kitgenix-custom-tabs-for-woocommerce-scope .kitgenix-custom-tabs-for-woocommerce-modal-grid,
+  .kitgenix-custom-tabs-for-woocommerce-modal-scope .kitgenix-custom-tabs-for-woocommerce-modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------------------------------------------
+  "Advanced settings" disclosure in the Add/Edit Tab modal (product
+  tabs) – Position, Nickname, Slug, Hide title, and Visibility
+  conditions all collapse behind this so the modal opens on just
+  Title + Content for the common case.
+----------------------------------------------------------------- */
+.kitgenix-custom-tabs-for-woocommerce-advanced {
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--kitgenix-border-color, #E5E7EB);
+}
+
+.kitgenix-custom-tabs-for-woocommerce-advanced__summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--kitgenix-brand);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-advanced__summary::-webkit-details-marker {
+  display: none;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-advanced__summary::before {
+  content: '';
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-advanced[open] > .kitgenix-custom-tabs-for-woocommerce-advanced__summary::before {
+  transform: rotate(45deg);
+}
+
+.kitgenix-custom-tabs-for-woocommerce-advanced__summary:focus-visible {
+  outline: none;
+  box-shadow: var(--kitgenix-focus-ring);
+  border-radius: var(--kitgenix-radius-sm);
+}
+
+.kitgenix-custom-tabs-for-woocommerce-advanced__body {
+  margin-top: 14px;
+}
+
+/* ----------------------------------------------------------------
+  Disabled tab rows (Enable/Disable action)
+----------------------------------------------------------------- */
+.kitgenix-custom-tabs-for-woocommerce-row-disabled {
+  opacity: 0.55;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-row-disabled td:first-child strong {
+  text-decoration: line-through;
+  text-decoration-color: var(--kitgenix-text-muted);
+}
+
+/* ----------------------------------------------------------------
+  Visibility conditions / product targeting sections in the modal
+----------------------------------------------------------------- */
+.kitgenix-custom-tabs-for-woocommerce-scope [data-kitgenix-custom-tabs-for-woocommerce-visibility-section="1"],
+.kitgenix-custom-tabs-for-woocommerce-modal-scope [data-kitgenix-custom-tabs-for-woocommerce-visibility-section="1"],
+.kitgenix-custom-tabs-for-woocommerce-scope [data-kitgenix-custom-tabs-for-woocommerce-target-section="1"],
+.kitgenix-custom-tabs-for-woocommerce-modal-scope [data-kitgenix-custom-tabs-for-woocommerce-target-section="1"] {
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--kitgenix-border-color, #E5E7EB);
+}
+
+.kitgenix-custom-tabs-for-woocommerce-target-row {
+  display: grid;
+  grid-template-columns: 120px 140px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-target-row__label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--kitgenix-text-muted);
+}
+
+@media screen and (max-width: 640px) {
+  .kitgenix-custom-tabs-for-woocommerce-target-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------------------------------------------
+  Quill editor slot inside the modal
+----------------------------------------------------------------- */
+.kitgenix-custom-tabs-for-woocommerce-quill-editor {
+  width: 100%;
+  min-height: 190px;
+  border: 1px solid var(--kitgenix-border-color);
+  border-radius: 0 0 var(--kitgenix-radius-lg) var(--kitgenix-radius-lg);
+  box-sizing: border-box;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-quill-toolbar {
+  border-radius: var(--kitgenix-radius-lg) var(--kitgenix-radius-lg) 0 0;
+}
+
+/* ----------------------------------------------------------------
+  Support tab
+----------------------------------------------------------------- */
+.kitgenix-support-chip-list {
+  margin-top: 4px;
+}
+
+.kitgenix-support-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kitgenix-support-list {
+  margin: 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.kitgenix-support-list li {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--kitgenix-text-color);
+}
+
+.kitgenix-support-list li:last-child {
+  margin-bottom: 0;
+}
+
+.kitgenix-notice .kitgenix-support-list li {
+  color: inherit;
 }
 
 /* ----------------------------------------------------------------
@@ -262,74 +367,3 @@
   }
 }
 
-
-/* ----------------------------------------------------------------
-  WORDPRESS 7.0 ADMIN EXTENSIONS
-  Preserve plugin layouts while aligning controls with WP admin styles.
------------------------------------------------------------------ */
-
-:root {
-  --kitgenix-brand: #4f2a9a;
-  --kitgenix-brand-hover: #42237f;
-  --kitgenix-brand-active: #351b66;
-  --kitgenix-focus-ring: 0 0 0 1px #4f2a9a;
-}
-
-.kitgenix-admin-app :is(input[type="text"], input[type="search"], input[type="number"], input[type="url"], input[type="email"], input[type="password"], input[type="date"], select, textarea),
-.kitgenix-analytics-wrap :is(input[type="text"], input[type="search"], input[type="number"], input[type="url"], input[type="email"], input[type="password"], input[type="date"], select, textarea),
-.wrap.kitgenix-pdf-invoicing-for-woocommerce-pdf-settings :is(input[type="text"], input[type="search"], input[type="number"], input[type="url"], input[type="email"], input[type="password"], input[type="date"], select, textarea) {
-  border-color: #8c8f94;
-  border-radius: 4px;
-  color: #2c3338;
-  background: #ffffff;
-}
-
-.kitgenix-admin-app :is(input[type="text"], input[type="search"], input[type="number"], input[type="url"], input[type="email"], input[type="password"], input[type="date"], select, textarea):focus,
-.kitgenix-admin-app :is(input[type="text"], input[type="search"], input[type="number"], input[type="url"], input[type="email"], input[type="password"], input[type="date"], select, textarea):focus-visible,
-.kitgenix-analytics-wrap :is(input[type="text"], input[type="search"], input[type="number"], input[type="url"], input[type="email"], input[type="password"], input[type="date"], select, textarea):focus,
-.kitgenix-analytics-wrap :is(input[type="text"], input[type="search"], input[type="number"], input[type="url"], input[type="email"], input[type="password"], input[type="date"], select, textarea):focus-visible,
-.wrap.kitgenix-pdf-invoicing-for-woocommerce-pdf-settings :is(input[type="text"], input[type="search"], input[type="number"], input[type="url"], input[type="email"], input[type="password"], input[type="date"], select, textarea):focus,
-.wrap.kitgenix-pdf-invoicing-for-woocommerce-pdf-settings :is(input[type="text"], input[type="search"], input[type="number"], input[type="url"], input[type="email"], input[type="password"], input[type="date"], select, textarea):focus-visible {
-  border-color: #4f2a9a;
-  box-shadow: 0 0 0 1px #4f2a9a;
-  outline: 2px solid transparent;
-}
-
-.kitgenix-admin-app :is(.button.button-primary, button.button-primary, a.button.button-primary, input.button.button-primary),
-.kitgenix-analytics-wrap :is(.button.button-primary, button.button-primary, a.button.button-primary, input.button.button-primary),
-.wrap.kitgenix-pdf-invoicing-for-woocommerce-pdf-settings :is(.button.button-primary, button.button-primary, a.button.button-primary, input.button.button-primary) {
-  border-color: #4f2a9a;
-  background: #4f2a9a;
-  color: #ffffff;
-  text-shadow: none;
-}
-
-.kitgenix-admin-app :is(.button.button-primary, button.button-primary, a.button.button-primary, input.button.button-primary):hover,
-.kitgenix-admin-app :is(.button.button-primary, button.button-primary, a.button.button-primary, input.button.button-primary):focus-visible,
-.kitgenix-analytics-wrap :is(.button.button-primary, button.button-primary, a.button.button-primary, input.button.button-primary):hover,
-.kitgenix-analytics-wrap :is(.button.button-primary, button.button-primary, a.button.button-primary, input.button.button-primary):focus-visible,
-.wrap.kitgenix-pdf-invoicing-for-woocommerce-pdf-settings :is(.button.button-primary, button.button-primary, a.button.button-primary, input.button.button-primary):hover,
-.wrap.kitgenix-pdf-invoicing-for-woocommerce-pdf-settings :is(.button.button-primary, button.button-primary, a.button.button-primary, input.button.button-primary):focus-visible {
-  border-color: #42237f;
-  background: #42237f;
-  color: #ffffff;
-}
-
-.kitgenix-admin-app :is(.button.button-secondary, button.button-secondary, a.button.button-secondary),
-.kitgenix-analytics-wrap :is(.button.button-secondary, button.button-secondary, a.button.button-secondary),
-.wrap.kitgenix-pdf-invoicing-for-woocommerce-pdf-settings :is(.button.button-secondary, button.button-secondary, a.button.button-secondary) {
-  border-color: #4f2a9a;
-  color: #4f2a9a;
-  background: #f6f7f7;
-}
-
-.kitgenix-admin-app :is(.button.button-secondary, button.button-secondary, a.button.button-secondary):hover,
-.kitgenix-admin-app :is(.button.button-secondary, button.button-secondary, a.button.button-secondary):focus-visible,
-.kitgenix-analytics-wrap :is(.button.button-secondary, button.button-secondary, a.button.button-secondary):hover,
-.kitgenix-analytics-wrap :is(.button.button-secondary, button.button-secondary, a.button.button-secondary):focus-visible,
-.wrap.kitgenix-pdf-invoicing-for-woocommerce-pdf-settings :is(.button.button-secondary, button.button-secondary, a.button.button-secondary):hover,
-.wrap.kitgenix-pdf-invoicing-for-woocommerce-pdf-settings :is(.button.button-secondary, button.button-secondary, a.button.button-secondary):focus-visible {
-  border-color: #42237f;
-  color: #42237f;
-  background: #f0f0f1;
-}

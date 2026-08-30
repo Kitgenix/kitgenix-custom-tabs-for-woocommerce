@@ -1,36 +1,39 @@
-/* Kitgenix Custom Tabs for WooCommerce — Product editor panel styles
+/* Kitgenix Custom Tabs for WooCommerce – Product editor panel styles
    Scoped to #kitgenix_custom_tabs_for_woocommerce_tabs and related WC selectors.
    Intentionally self-contained: this CSS loads on the WC product edit screen and should not affect or be affected by other styles on the page.
 */
 
-/* Self-contained design tokens (panel scope) */
+/* Self-contained design tokens (panel scope) – values match the Kitgenix
+   brand kit (Primary Blue #214BFF, Midnight #071B3A, Slate #64748B, 8/12/16
+   radius scale) so this panel reads as Kitgenix even though it's isolated
+   from kitgenix-admin-ui.css by design. */
 #kitgenix_custom_tabs_for_woocommerce_tabs {
   --kitgenix-custom-tabs-for-woocommerce-surface:        #ffffff;
-  --kitgenix-custom-tabs-for-woocommerce-surface-alt:    #f6f7f7;
-  --kitgenix-custom-tabs-for-woocommerce-border-color:   #dcdcde;
-  --kitgenix-custom-tabs-for-woocommerce-text-color:     #1d2327;
-  --kitgenix-custom-tabs-for-woocommerce-text-muted:     #646970;
-  --kitgenix-custom-tabs-for-woocommerce-heading:        #1d2327;
-  --kitgenix-custom-tabs-for-woocommerce-brand:          #4f2a9a;
-  --kitgenix-custom-tabs-for-woocommerce-brand-strong:   #f364dd;
-  --kitgenix-custom-tabs-for-woocommerce-radius:         12px;
-  --kitgenix-custom-tabs-for-woocommerce-radius-sm:       8px;
-  --kitgenix-custom-tabs-for-woocommerce-radius-xs:       6px;
+  --kitgenix-custom-tabs-for-woocommerce-surface-alt:    #F5F9FF;
+  --kitgenix-custom-tabs-for-woocommerce-border-color:   #E1E7F5;
+  --kitgenix-custom-tabs-for-woocommerce-text-color:     #071B3A;
+  --kitgenix-custom-tabs-for-woocommerce-text-muted:     #64748B;
+  --kitgenix-custom-tabs-for-woocommerce-heading:        #071B3A;
+  --kitgenix-custom-tabs-for-woocommerce-brand:          #214BFF;
+  --kitgenix-custom-tabs-for-woocommerce-brand-strong:   #0F2C5C;
+  --kitgenix-custom-tabs-for-woocommerce-radius:         16px;
+  --kitgenix-custom-tabs-for-woocommerce-radius-sm:       12px;
+  --kitgenix-custom-tabs-for-woocommerce-radius-xs:       8px;
   --kitgenix-custom-tabs-for-woocommerce-transition:     150ms ease;
-  --kitgenix-custom-tabs-for-woocommerce-shadow-sm:      0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-  --kitgenix-custom-tabs-for-woocommerce-focus-ring:     0 0 0 2px rgba(79,42,154,.25);
+  --kitgenix-custom-tabs-for-woocommerce-shadow-sm:      0 2px 8px rgba(7,27,58,.06);
+  --kitgenix-custom-tabs-for-woocommerce-focus-ring:     0 0 0 3px rgba(33,75,255,.16);
 }
 
 @media (prefers-color-scheme: dark) {
   #kitgenix_custom_tabs_for_woocommerce_tabs {
-    --kitgenix-custom-tabs-for-woocommerce-surface:      #1d2327;
-    --kitgenix-custom-tabs-for-woocommerce-surface-alt:  #2c3338;
-    --kitgenix-custom-tabs-for-woocommerce-border-color: #3c434a;
-    --kitgenix-custom-tabs-for-woocommerce-text-color:   #f0f0f1;
-    --kitgenix-custom-tabs-for-woocommerce-text-muted:   #8c8f94;
-    --kitgenix-custom-tabs-for-woocommerce-heading:      #f0f0f1;
-    --kitgenix-custom-tabs-for-woocommerce-brand:        #9b7ae0;
-    --kitgenix-custom-tabs-for-woocommerce-brand-strong: #e96fd6;
+    --kitgenix-custom-tabs-for-woocommerce-surface:      #0F2242;
+    --kitgenix-custom-tabs-for-woocommerce-surface-alt:  #0A1830;
+    --kitgenix-custom-tabs-for-woocommerce-border-color: #1E3358;
+    --kitgenix-custom-tabs-for-woocommerce-text-color:   #EAF0FB;
+    --kitgenix-custom-tabs-for-woocommerce-text-muted:   #93A2C2;
+    --kitgenix-custom-tabs-for-woocommerce-heading:      #EAF0FB;
+    --kitgenix-custom-tabs-for-woocommerce-brand:        #42B3FF;
+    --kitgenix-custom-tabs-for-woocommerce-brand-strong: #6EC6FF;
   }
 }
 
@@ -154,8 +157,8 @@
   margin: 0 8px 0 0;
   vertical-align: -2px;
   background-color: currentColor;
-  -webkit-mask: url('../images/logos/kitgenix-custom-wordpress-admin-icon.svg') no-repeat center / contain;
-  mask: url('../images/logos/kitgenix-custom-wordpress-admin-icon.svg') no-repeat center / contain;
+  -webkit-mask: url('../images/logos/kitgenix-wordpress-admin-menu-favicon.svg') no-repeat center / contain;
+  mask: url('../images/logos/kitgenix-wordpress-admin-menu-favicon.svg') no-repeat center / contain;
 }
 
 /* ----------------------------------------------------------------
@@ -173,7 +176,7 @@
   width: 100%;
 }
 
-/* Override: product panel is narrow — remove min-width set in admin.css */
+/* Override: product panel is narrow – remove min-width set in admin.css */
 #kitgenix_custom_tabs_for_woocommerce_tabs .kitgenix-custom-tabs-for-woocommerce-table-wrap table {
   min-width: 0;
 }
@@ -184,7 +187,7 @@
   padding: 8px 10px;
 }
 
-/* Actions column — allow wrapping in narrow panel */
+/* Actions column – allow wrapping in narrow panel */
 #kitgenix_custom_tabs_for_woocommerce_tabs .kitgenix-custom-tabs-for-woocommerce-actions {
   white-space: normal;
 }
@@ -230,16 +233,16 @@
 }
 
 /* ----------------------------------------------------------------
-  Modal — neutralise WC product panel CSS interference
+  Modal – neutralise WC product panel CSS interference
 ----------------------------------------------------------------- */
 
 /* Force correct text colour inside our modal regardless of WC styles */
-#kitgenix-custom-tabs-for-woocommerce-modal .kitgenix-modal__dialog {
-  color: var(--kitgenix-text-color, #1d2327) !important;
+#kitgenix-custom-tabs-for-woocommerce-modal .kitgenix-modal-dialog {
+  color: var(--kitgenix-text-color, #071B3A) !important;
   -webkit-text-fill-color: currentColor;
 }
 
-#kitgenix-custom-tabs-for-woocommerce-modal .kitgenix-modal__dialog :is(
+#kitgenix-custom-tabs-for-woocommerce-modal .kitgenix-modal-dialog :is(
   label, p, span, a, h1, h2, h3, h4, li, div, td, th
 ) {
   color: inherit;
@@ -279,48 +282,26 @@
 }
 
 /* ----------------------------------------------------------------
-  WORDPRESS 7.0 PRODUCT EDIT EXTENSIONS
-  Keep existing panel layout; align controls and brand to WP admin.
+  Focus states & primary button – brand blue, matching every other
+  Kitgenix admin surface (see kitgenix-admin-ui.css button-primary).
 ----------------------------------------------------------------- */
-
-#kitgenix_custom_tabs_for_woocommerce_tabs {
-  --kitgenix-custom-tabs-for-woocommerce-brand: #4f2a9a;
-  --kitgenix-custom-tabs-for-woocommerce-brand-strong: #4f2a9a;
-  --kitgenix-custom-tabs-for-woocommerce-focus-ring: 0 0 0 1px #4f2a9a;
-  --kitgenix-custom-tabs-for-woocommerce-radius: 4px;
-  --kitgenix-custom-tabs-for-woocommerce-radius-sm: 4px;
-  --kitgenix-custom-tabs-for-woocommerce-radius-xs: 4px;
-}
-
-@media (prefers-color-scheme: dark) {
-  #kitgenix_custom_tabs_for_woocommerce_tabs {
-    --kitgenix-custom-tabs-for-woocommerce-surface: #ffffff;
-    --kitgenix-custom-tabs-for-woocommerce-surface-alt: #f6f7f7;
-    --kitgenix-custom-tabs-for-woocommerce-border-color: #dcdcde;
-    --kitgenix-custom-tabs-for-woocommerce-text-color: #1d2327;
-    --kitgenix-custom-tabs-for-woocommerce-text-muted: #646970;
-    --kitgenix-custom-tabs-for-woocommerce-heading: #1d2327;
-    --kitgenix-custom-tabs-for-woocommerce-brand: #4f2a9a;
-    --kitgenix-custom-tabs-for-woocommerce-brand-strong: #4f2a9a;
-  }
-}
 
 #kitgenix_custom_tabs_for_woocommerce_tabs :is(input[type="text"], input[type="url"], input[type="number"], select, textarea):focus,
 #kitgenix_custom_tabs_for_woocommerce_tabs :is(input[type="text"], input[type="url"], input[type="number"], select, textarea):focus-visible {
-  border-color: #4f2a9a;
-  box-shadow: 0 0 0 1px #4f2a9a;
+  border-color: var(--kitgenix-custom-tabs-for-woocommerce-brand);
+  box-shadow: var(--kitgenix-custom-tabs-for-woocommerce-focus-ring);
   outline: 2px solid transparent;
 }
 
 #kitgenix_custom_tabs_for_woocommerce_tabs :is(.button.button-primary, button.button-primary, a.button.button-primary) {
-  border-color: #4f2a9a;
-  background: #4f2a9a;
+  border-color: var(--kitgenix-custom-tabs-for-woocommerce-brand);
+  background: var(--kitgenix-custom-tabs-for-woocommerce-brand);
   color: #ffffff;
 }
 
 #kitgenix_custom_tabs_for_woocommerce_tabs :is(.button.button-primary, button.button-primary, a.button.button-primary):hover,
 #kitgenix_custom_tabs_for_woocommerce_tabs :is(.button.button-primary, button.button-primary, a.button.button-primary):focus-visible {
-  border-color: #42237f;
-  background: #42237f;
+  border-color: var(--kitgenix-custom-tabs-for-woocommerce-brand-strong);
+  background: var(--kitgenix-custom-tabs-for-woocommerce-brand-strong);
   color: #ffffff;
 }

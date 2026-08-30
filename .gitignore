@@ -36,9 +36,10 @@ pnpm-debug.log*
 *.swo
 *~
 
-# Dependency folders
-node_modules/
-vendor/
+# Dependency folders (assets/vendor/ ships bundled runtime libraries such as
+# the Quill editor and must stay tracked/shipped)
+/node_modules/
+
 
 # Build / cache folders
 dist/

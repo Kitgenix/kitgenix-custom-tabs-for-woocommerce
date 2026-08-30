@@ -9,9 +9,12 @@ namespace KitgenixCustomTabsForWooCommerce;
 
 defined( 'ABSPATH' ) || exit;
 
+use KitgenixCustomTabsForWooCommerce\Admin\Bulk_Tools;
+use KitgenixCustomTabsForWooCommerce\Admin\Portability;
 use KitgenixCustomTabsForWooCommerce\Admin\Product_Tabs;
 use KitgenixCustomTabsForWooCommerce\Admin\Settings_UI;
 use KitgenixCustomTabsForWooCommerce\Core\Settings;
+use KitgenixCustomTabsForWooCommerce\Frontend\Shortcode;
 use KitgenixCustomTabsForWooCommerce\Frontend\Tabs;
 
 final class Plugin {
@@ -29,7 +32,11 @@ final class Plugin {
 		if ( \is_admin() ) {
 			Settings_UI::init();
 			Product_Tabs::init();
+			Portability::init();
+			Bulk_Tools::init();
 		}
+
+		Shortcode::init();
 
 		// Frontend.
 		Tabs::init();

@@ -6,9 +6,12 @@ namespace KitgenixCustomTabsForWooCommerce\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
+use KitgenixCustomTabsForWooCommerce\Core\Event_Log;
 use KitgenixCustomTabsForWooCommerce\Core\Settings;
+use KitgenixCustomTabsForWooCommerce\Core\Tab_Matcher;
 
 final class Product_Tabs {
+	use Tab_Modal_Fields;
 	private const META_KEY = 'kitgenix_custom_tabs_for_woocommerce_tabs';
 	private const NONCE_ACTION = 'kitgenix_custom_tabs_for_woocommerce_tabs_save';
 	private const NONCE_NAME = 'kitgenix_custom_tabs_for_woocommerce_tabs_nonce';
@@ -55,16 +58,21 @@ final class Product_Tabs {
 			return;
 		}
 
+		// Quill is bundled locally (assets/vendor/quill/) rather than loaded from a
+		// third-party CDN: wp-admin should not depend on an external host being
+		// reachable to edit a product, and loading executable JS from a CDN into
+		// wp-admin is both a reliability risk and best avoided for a WordPress.org
+		// plugin. See assets/vendor/quill/quill.min.js for the upstream license header.
 		wp_enqueue_style(
 			'kitgenix-custom-tabs-for-woocommerce-quill',
-			'https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css',
+			plugins_url( 'assets/vendor/quill/quill.snow.css', KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_FILE ),
 			[],
 			'1.3.7'
 		);
 
 		wp_enqueue_script(
 			'kitgenix-custom-tabs-for-woocommerce-quill',
-			'https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js',
+			plugins_url( 'assets/vendor/quill/quill.min.js', KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_FILE ),
 			[],
 			'1.3.7',
 			true
@@ -79,7 +87,7 @@ final class Product_Tabs {
 		$product_js_file = $base_dir ? $base_dir . 'assets/js/admin.js' : '';
 		$product_js_ver  = ( $product_js_file && file_exists( $product_js_file ) ) ? (string) filemtime( $product_js_file ) : $ver;
 
-		wp_enqueue_style( 'kitgenix-admin-ui' );
+		wp_enqueue_style( 'kitgenix-custom-tabs-for-woocommerce-admin-ui' );
 
 		wp_enqueue_style(
 			'kitgenix-custom-tabs-for-woocommerce-admin-shared',
@@ -118,6 +126,11 @@ final class Product_Tabs {
 					'insertTemplate' => __( 'Insert template', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'templateToolbarLabel' => __( 'Template library', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'copyLabel' => __( 'Copy', 'kitgenix-custom-tabs-for-woocommerce' ),
+					'moveUp' => __( 'Move up', 'kitgenix-custom-tabs-for-woocommerce' ),
+					'moveDown' => __( 'Move down', 'kitgenix-custom-tabs-for-woocommerce' ),
+					'disableTab' => __( 'Disable', 'kitgenix-custom-tabs-for-woocommerce' ),
+					'enableTab' => __( 'Enable', 'kitgenix-custom-tabs-for-woocommerce' ),
+					'disabledBadge' => __( 'Disabled', 'kitgenix-custom-tabs-for-woocommerce' ),
 				],
 			]
 		);
@@ -150,7 +163,7 @@ final class Product_Tabs {
 
 		echo '<div class="kitgenix-custom-tabs-for-woocommerce-panel-header">'
 			. '<span class="kitgenix-custom-tabs-for-woocommerce-panel-header__title">' . esc_html__( 'Custom tabs', 'kitgenix-custom-tabs-for-woocommerce' ) . '</span>'
-			. '<div class="kitgenix-custom-tabs-for-woocommerce-panel-header__actions">'
+			. '<div class="kitgenix-custom-tabs-for-woocommerce-panel-header__actions kitgenix-button-group">'
 			. '<a class="button button-secondary" target="_blank" rel="noopener noreferrer" href="' . esc_url( $settings_url ) . '">'
 			. '<span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>'
 			. esc_html__( 'Tab settings', 'kitgenix-custom-tabs-for-woocommerce' )
@@ -188,14 +201,15 @@ final class Product_Tabs {
 
 		echo '<div class="kitgenix-custom-tabs-for-woocommerce-manager kitgenix-custom-tabs-for-woocommerce-scope"'
 			. ' data-kitgenix-custom-tabs-for-woocommerce-manager="1"'
+			. ' data-kitgenix-custom-tabs-for-woocommerce-manager-type="product"'
 			. ' data-kitgenix-custom-tabs-for-woocommerce-base="kitgenix_custom_tabs_for_woocommerce_tabs"'
 			. ' data-kitgenix-custom-tabs-for-woocommerce-max="' . esc_attr( (string) $max_tabs ) . '"'
 			. self::get_templates_dataset_attribute() // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Method returns escaped data-* attributes only.
 			. ' data-kitgenix-custom-tabs-for-woocommerce-empty-message="' . esc_attr( $empty_message ) . '"'
 			. '>';
 
-		echo '<div class="kitgenix-custom-tabs-for-woocommerce-table-wrap kitgenix-custom-tabs-for-woocommerce-panel-table">'
-			. '<table class="widefat striped">'
+		echo '<div class="kitgenix-custom-tabs-for-woocommerce-table-wrap kitgenix-custom-tabs-for-woocommerce-panel-table kitgenix-table-wrap">'
+			. '<table class="kitgenix-table">'
 			. '<thead><tr>'
 			. '<th scope="col">' . esc_html__( 'Tab', 'kitgenix-custom-tabs-for-woocommerce' ) . '</th>'
 			. '<th scope="col">' . esc_html__( 'Slug', 'kitgenix-custom-tabs-for-woocommerce' ) . '</th>'
@@ -216,17 +230,22 @@ final class Product_Tabs {
 			$slug     = isset( $tab['slug'] ) ? (string) $tab['slug'] : '';
 			$priority = isset( $tab['priority'] ) ? (int) $tab['priority'] : Settings::compute_priority_for_index( $base, $step, $index );
 			$content  = isset( $tab['content'] ) ? (string) $tab['content'] : '';
+			$enabled  = ! array_key_exists( 'enabled', $tab ) || ! empty( $tab['enabled'] );
+			$visibility = isset( $tab['visibility'] ) && is_array( $tab['visibility'] ) ? $tab['visibility'] : null;
+			$hide_title = ! empty( $tab['hide_title'] );
 
-			self::render_table_row( $index, $title, $nickname, $slug, $priority );
+			self::render_table_row( $index, $title, $nickname, $slug, $priority, $enabled );
 			ob_start();
-			self::render_hidden_fields( $index, $title, $nickname, $slug, $priority, $content );
+			self::render_hidden_fields( $index, $title, $nickname, $slug, $priority, $content, $enabled, $visibility, $hide_title );
 			$fields_html .= (string) ob_get_clean();
 			$index++;
 		}
 		if ( $index === 0 ) {
 			echo '<tr class="kitgenix-custom-tabs-for-woocommerce-empty-row" data-kitgenix-custom-tabs-for-woocommerce-empty="1">'
 				. '<td class="kitgenix-custom-tabs-for-woocommerce-empty-cell" colspan="4">'
-				. '<span class="description">' . esc_html( $empty_message ) . '</span>'
+				. '<div class="kitgenix-empty-state">'
+				. '<p class="kitgenix-empty-state-desc">' . esc_html( $empty_message ) . '</p>'
+				. '</div>'
 				. '</td>'
 				. '</tr>';
 		}
@@ -244,86 +263,114 @@ final class Product_Tabs {
 		echo '</div>';
 	}
 
-	private static function render_table_row( int $index, string $title, string $nickname, string $slug, int $priority ): void {
+	private static function render_table_row( int $index, string $title, string $nickname, string $slug, int $priority, bool $enabled = true ): void {
 		$display_title = $nickname !== '' ? $nickname : ( $title !== '' ? $title : __( 'Untitled', 'kitgenix-custom-tabs-for-woocommerce' ) );
 		$subtitle      = ( $nickname !== '' && $title !== '' && $nickname !== $title ) ? $title : '';
-		$display_slug  = $slug !== '' ? $slug : '—';
+		$display_slug  = $slug !== '' ? $slug : '–';
+		$row_class     = $enabled ? '' : ' kitgenix-custom-tabs-for-woocommerce-row-disabled';
 
-		echo '<tr data-kitgenix-custom-tabs-for-woocommerce-row="1" data-index="' . esc_attr( (string) $index ) . '">'
+		echo '<tr data-kitgenix-custom-tabs-for-woocommerce-row="1" data-index="' . esc_attr( (string) $index ) . '" class="' . esc_attr( trim( $row_class ) ) . '">'
 			. '<td>'
 			. '<strong data-kitgenix-custom-tabs-for-woocommerce-row-title="1">' . esc_html( $display_title ) . '</strong>'
 			. '<div class="kitgenix-custom-tabs-for-woocommerce-tabs-subtitle" data-kitgenix-custom-tabs-for-woocommerce-row-subtitle="1">' . esc_html( $subtitle ) . '</div>'
+			. ( $enabled ? '' : '<span class="kitgenix-badge neutral" data-kitgenix-custom-tabs-for-woocommerce-row-disabled-badge="1">' . esc_html__( 'Disabled', 'kitgenix-custom-tabs-for-woocommerce' ) . '</span>' )
 			. '</td>'
 			. '<td><span class="kitgenix-custom-tabs-for-woocommerce-code" data-kitgenix-custom-tabs-for-woocommerce-row-slug="1">' . esc_html( $display_slug ) . '</span></td>'
 			. '<td><span data-kitgenix-custom-tabs-for-woocommerce-row-position="1">' . esc_html( (string) $priority ) . '</span></td>'
 			. '<td class="kitgenix-custom-tabs-for-woocommerce-actions">'
+			. '<a href="#" class="button button-small" data-kitgenix-custom-tabs-for-woocommerce-move-up="1" aria-label="' . esc_attr__( 'Move up', 'kitgenix-custom-tabs-for-woocommerce' ) . '">&#8593;</a> '
+			. '<a href="#" class="button button-small" data-kitgenix-custom-tabs-for-woocommerce-move-down="1" aria-label="' . esc_attr__( 'Move down', 'kitgenix-custom-tabs-for-woocommerce' ) . '">&#8595;</a> '
 			. '<a href="#" class="button button-small" data-kitgenix-custom-tabs-for-woocommerce-edit="1">' . esc_html__( 'Edit', 'kitgenix-custom-tabs-for-woocommerce' ) . '</a> '
+			. '<a href="#" class="button button-small" data-kitgenix-custom-tabs-for-woocommerce-toggle-enabled="1">' . ( $enabled ? esc_html__( 'Disable', 'kitgenix-custom-tabs-for-woocommerce' ) : esc_html__( 'Enable', 'kitgenix-custom-tabs-for-woocommerce' ) ) . '</a> '
 			. '<a href="#" class="button button-link-delete" data-kitgenix-custom-tabs-for-woocommerce-remove="1">' . esc_html__( 'Remove', 'kitgenix-custom-tabs-for-woocommerce' ) . '</a>'
 			. '</td>'
 			. '</tr>';
 	}
 
-	private static function render_hidden_fields( int $index, string $title, string $nickname, string $slug, int $priority, string $content ): void {
+	/**
+	 * @param array<string,mixed>|null $visibility
+	 */
+	private static function render_hidden_fields( int $index, string $title, string $nickname, string $slug, int $priority, string $content, bool $enabled = true, ?array $visibility = null, bool $hide_title = false ): void {
+		$prefix = 'kitgenix_custom_tabs_for_woocommerce_tabs[' . esc_attr( (string) $index ) . ']';
 		echo '<div data-kitgenix-custom-tabs-for-woocommerce-fields="1" data-index="' . esc_attr( (string) $index ) . '">'
-			. '<input type="hidden" name="kitgenix_custom_tabs_for_woocommerce_tabs[' . esc_attr( (string) $index ) . '][title]" value="' . esc_attr( $title ) . '" />'
-			. '<input type="hidden" name="kitgenix_custom_tabs_for_woocommerce_tabs[' . esc_attr( (string) $index ) . '][nickname]" value="' . esc_attr( $nickname ) . '" />'
-			. '<input type="hidden" name="kitgenix_custom_tabs_for_woocommerce_tabs[' . esc_attr( (string) $index ) . '][slug]" value="' . esc_attr( $slug ) . '" />'
-			. '<input type="hidden" name="kitgenix_custom_tabs_for_woocommerce_tabs[' . esc_attr( (string) $index ) . '][priority]" value="' . esc_attr( (string) $priority ) . '" />'
-			. '<textarea name="kitgenix_custom_tabs_for_woocommerce_tabs[' . esc_attr( (string) $index ) . '][content]" data-kitgenix-custom-tabs-for-woocommerce-content="1">' . esc_textarea( $content ) . '</textarea>'
+			. '<input type="hidden" name="' . esc_attr( $prefix ) . '[title]" value="' . esc_attr( $title ) . '" />'
+			. '<input type="hidden" name="' . esc_attr( $prefix ) . '[hide_title]" value="' . ( $hide_title ? '1' : '' ) . '" />'
+			. '<input type="hidden" name="' . esc_attr( $prefix ) . '[nickname]" value="' . esc_attr( $nickname ) . '" />'
+			. '<input type="hidden" name="' . esc_attr( $prefix ) . '[slug]" value="' . esc_attr( $slug ) . '" />'
+			. '<input type="hidden" name="' . esc_attr( $prefix ) . '[priority]" value="' . esc_attr( (string) $priority ) . '" />'
+			. '<input type="hidden" name="' . esc_attr( $prefix ) . '[enabled]" value="' . ( $enabled ? '1' : '0' ) . '" data-kitgenix-custom-tabs-for-woocommerce-enabled-field="1" />'
+			. '<input type="hidden" name="' . esc_attr( $prefix ) . '[visibility]" value="' . esc_attr( (string) wp_json_encode( $visibility ?? Tab_Matcher::default_visibility() ) ) . '" data-kitgenix-custom-tabs-for-woocommerce-visibility-field="1" />'
+			. '<textarea name="' . esc_attr( $prefix ) . '[content]" data-kitgenix-custom-tabs-for-woocommerce-content="1">' . esc_textarea( $content ) . '</textarea>'
 			. '</div>';
 	}
 
 	private static function render_backbone_modal_template(): void {
 		$position_help_url = esc_url( 'https://woocommerce.com/document/woocommerce-product-tabs/' );
 
-		// Render as a persistent Kitgenix modal (matches Order Tracking modal styling/behavior).
+		// Render as a persistent Kitgenix modal (shared kitgenix-modal-* library markup).
 		?>
-		<div id="kitgenix-custom-tabs-for-woocommerce-modal" class="kitgenix-modal kitgenix-modal--wide" aria-hidden="true" role="dialog" aria-modal="true">
-			<div class="kitgenix-modal__backdrop" data-kitgenix-modal-close="1"></div>
-			<div class="kitgenix-modal__dialog" role="document">
-				<div class="kitgenix-modal__header">
-					<h2 class="kitgenix-modal__title" data-kitgenix-custom-tabs-for-woocommerce-modal-title="1"><?php esc_html_e( 'Edit Tab', 'kitgenix-custom-tabs-for-woocommerce' ); ?></h2>
-					<button type="button" class="button kitgenix-modal__close" data-kitgenix-modal-close="1"><?php esc_html_e( 'Close', 'kitgenix-custom-tabs-for-woocommerce' ); ?></button>
+		<div id="kitgenix-custom-tabs-for-woocommerce-modal" class="kitgenix-modal" hidden role="dialog" aria-modal="true">
+			<div class="kitgenix-modal-backdrop" data-kitgenix-modal-close="1"></div>
+			<div class="kitgenix-modal-dialog kitgenix-modal-dialog-lg" role="document">
+				<div class="kitgenix-modal-header">
+					<h2 class="kitgenix-modal-title" data-kitgenix-custom-tabs-for-woocommerce-modal-title="1"><?php esc_html_e( 'Edit Tab', 'kitgenix-custom-tabs-for-woocommerce' ); ?></h2>
+					<button type="button" class="kitgenix-modal-close" data-kitgenix-modal-close="1" aria-label="<?php echo esc_attr__( 'Close', 'kitgenix-custom-tabs-for-woocommerce' ); ?>">&times;</button>
 				</div>
 
-				<div class="kitgenix-modal__body">
+				<div class="kitgenix-modal-body">
 					<input type="hidden" data-kitgenix-custom-tabs-for-woocommerce-modal-index="1" value="" />
 					<div class="kitgenix-custom-tabs-for-woocommerce-modal-scope">
 						<div class="kitgenix-custom-tabs-for-woocommerce-modal-grid">
-							<div class="kitgenix-custom-tabs-for-woocommerce-field">
+							<div class="kitgenix-custom-tabs-for-woocommerce-field kitgenix-custom-tabs-for-woocommerce-is-full">
 								<label for="kitgenix_custom_tabs_for_woocommerce_modal_title"><?php esc_html_e( 'Tab title', 'kitgenix-custom-tabs-for-woocommerce' ); ?></label>
 								<input type="text" id="kitgenix_custom_tabs_for_woocommerce_modal_title" class="regular-text" data-kitgenix-custom-tabs-for-woocommerce-modal-field="title" value="" maxlength="50" placeholder="<?php echo esc_attr__( 'Title for tab', 'kitgenix-custom-tabs-for-woocommerce' ); ?>" />
 								<div class="kitgenix-custom-tabs-for-woocommerce-field__error" data-kitgenix-custom-tabs-for-woocommerce-error="title" aria-live="polite"></div>
-							</div>
-							<div class="kitgenix-custom-tabs-for-woocommerce-field">
-								<label for="kitgenix_custom_tabs_for_woocommerce_modal_priority"><?php esc_html_e( 'Tab position', 'kitgenix-custom-tabs-for-woocommerce' ); ?></label>
-								<div class="kitgenix-custom-tabs-for-woocommerce-field__inline">
-									<input type="number" min="0" step="1" id="kitgenix_custom_tabs_for_woocommerce_modal_priority" class="small-text" data-kitgenix-custom-tabs-for-woocommerce-modal-field="priority" value="" />
-									<a class="kitgenix-custom-tabs-for-woocommerce-modal__help-link" href="<?php echo esc_url( $position_help_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn about positioning', 'kitgenix-custom-tabs-for-woocommerce' ); ?></a>
-								</div>
 							</div>
 							<div class="kitgenix-custom-tabs-for-woocommerce-field kitgenix-custom-tabs-for-woocommerce-is-full">
 								<label for="kitgenix_custom_tabs_for_woocommerce_modal_editor"><?php esc_html_e( 'Tab content', 'kitgenix-custom-tabs-for-woocommerce' ); ?></label>
 								<div class="kitgenix-custom-tabs-for-woocommerce-editor-slot" data-kitgenix-custom-tabs-for-woocommerce-editor-slot="1"></div>
 								<div class="kitgenix-custom-tabs-for-woocommerce-field__error" data-kitgenix-custom-tabs-for-woocommerce-error="content" aria-live="polite"></div>
 							</div>
-							<div class="kitgenix-custom-tabs-for-woocommerce-field">
-								<label for="kitgenix_custom_tabs_for_woocommerce_modal_nickname"><?php esc_html_e( 'Tab nickname (optional)', 'kitgenix-custom-tabs-for-woocommerce' ); ?></label>
-								<input type="text" id="kitgenix_custom_tabs_for_woocommerce_modal_nickname" class="regular-text" data-kitgenix-custom-tabs-for-woocommerce-modal-field="nickname" value="" placeholder="<?php echo esc_attr__( 'Nickname for tab', 'kitgenix-custom-tabs-for-woocommerce' ); ?>" />
-							</div>
-							<div class="kitgenix-custom-tabs-for-woocommerce-field">
-								<label for="kitgenix_custom_tabs_for_woocommerce_modal_slug"><?php esc_html_e( 'Tab slug', 'kitgenix-custom-tabs-for-woocommerce' ); ?></label>
-								<div class="kitgenix-custom-tabs-for-woocommerce-field__inline">
-									<input type="text" id="kitgenix_custom_tabs_for_woocommerce_modal_slug" class="regular-text" data-kitgenix-custom-tabs-for-woocommerce-modal-field="slug" value="" placeholder="<?php echo esc_attr__( 'Tab slug', 'kitgenix-custom-tabs-for-woocommerce' ); ?>" />
-									<a href="#" class="kitgenix-custom-tabs-for-woocommerce-modal__help-link" data-kitgenix-custom-tabs-for-woocommerce-slug-generate="1"><?php esc_html_e( 'Generate from title', 'kitgenix-custom-tabs-for-woocommerce' ); ?></a>
+
+							<details class="kitgenix-custom-tabs-for-woocommerce-advanced kitgenix-custom-tabs-for-woocommerce-is-full">
+								<summary class="kitgenix-custom-tabs-for-woocommerce-advanced__summary"><?php esc_html_e( 'Advanced settings', 'kitgenix-custom-tabs-for-woocommerce' ); ?></summary>
+								<div class="kitgenix-custom-tabs-for-woocommerce-advanced__body">
+									<div class="kitgenix-custom-tabs-for-woocommerce-modal-grid">
+										<div class="kitgenix-custom-tabs-for-woocommerce-field">
+											<label class="kitgenix-custom-tabs-for-woocommerce-field__checkbox">
+												<input type="checkbox" id="kitgenix_custom_tabs_for_woocommerce_modal_hide_title" data-kitgenix-custom-tabs-for-woocommerce-modal-field="hide_title" value="1" />
+												<?php esc_html_e( 'Hide title inside tab content', 'kitgenix-custom-tabs-for-woocommerce' ); ?>
+											</label>
+											<div class="kitgenix-custom-tabs-for-woocommerce-field__hint"><?php esc_html_e( 'The tab still shows this title in the tab bar; this only hides the heading repeated inside the panel.', 'kitgenix-custom-tabs-for-woocommerce' ); ?></div>
+										</div>
+										<div class="kitgenix-custom-tabs-for-woocommerce-field">
+											<label for="kitgenix_custom_tabs_for_woocommerce_modal_priority"><?php esc_html_e( 'Tab position', 'kitgenix-custom-tabs-for-woocommerce' ); ?></label>
+											<div class="kitgenix-custom-tabs-for-woocommerce-field__inline">
+												<input type="number" min="0" step="1" id="kitgenix_custom_tabs_for_woocommerce_modal_priority" class="small-text" data-kitgenix-custom-tabs-for-woocommerce-modal-field="priority" value="" />
+												<a class="kitgenix-custom-tabs-for-woocommerce-modal__help-link" href="<?php echo esc_url( $position_help_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn about positioning', 'kitgenix-custom-tabs-for-woocommerce' ); ?></a>
+											</div>
+										</div>
+										<div class="kitgenix-custom-tabs-for-woocommerce-field">
+											<label for="kitgenix_custom_tabs_for_woocommerce_modal_nickname"><?php esc_html_e( 'Tab nickname (optional)', 'kitgenix-custom-tabs-for-woocommerce' ); ?></label>
+											<input type="text" id="kitgenix_custom_tabs_for_woocommerce_modal_nickname" class="regular-text" data-kitgenix-custom-tabs-for-woocommerce-modal-field="nickname" value="" placeholder="<?php echo esc_attr__( 'Nickname for tab', 'kitgenix-custom-tabs-for-woocommerce' ); ?>" />
+										</div>
+										<div class="kitgenix-custom-tabs-for-woocommerce-field">
+											<label for="kitgenix_custom_tabs_for_woocommerce_modal_slug"><?php esc_html_e( 'Tab slug', 'kitgenix-custom-tabs-for-woocommerce' ); ?></label>
+											<div class="kitgenix-custom-tabs-for-woocommerce-field__inline">
+												<input type="text" id="kitgenix_custom_tabs_for_woocommerce_modal_slug" class="regular-text" data-kitgenix-custom-tabs-for-woocommerce-modal-field="slug" value="" placeholder="<?php echo esc_attr__( 'Tab slug', 'kitgenix-custom-tabs-for-woocommerce' ); ?>" />
+												<a href="#" class="kitgenix-custom-tabs-for-woocommerce-modal__help-link" data-kitgenix-custom-tabs-for-woocommerce-slug-generate="1"><?php esc_html_e( 'Generate from title', 'kitgenix-custom-tabs-for-woocommerce' ); ?></a>
+											</div>
+											<div class="kitgenix-custom-tabs-for-woocommerce-field__hint"><?php esc_html_e( 'Allowed: letters, numbers, and hyphens.', 'kitgenix-custom-tabs-for-woocommerce' ); ?></div>
+										</div>
+									</div>
+									<?php self::render_visibility_modal_fields( 'kitgenix_custom_tabs_for_woocommerce_modal' ); ?>
 								</div>
-								<div class="kitgenix-custom-tabs-for-woocommerce-field__hint"><?php esc_html_e( 'Allowed: letters, numbers, and hyphens.', 'kitgenix-custom-tabs-for-woocommerce' ); ?></div>
-							</div>
+							</details>
 						</div>
 					</div>
 				</div>
 
-				<div class="kitgenix-modal__actions">
+				<div class="kitgenix-modal-footer">
 					<button type="button" class="button" data-kitgenix-custom-tabs-for-woocommerce-cancel="1" data-kitgenix-modal-close="1"><?php esc_html_e( 'Cancel', 'kitgenix-custom-tabs-for-woocommerce' ); ?></button>
 					<button type="button" class="button button-primary" data-kitgenix-custom-tabs-for-woocommerce-save="1"><?php esc_html_e( 'Done', 'kitgenix-custom-tabs-for-woocommerce' ); ?></button>
 				</div>
@@ -339,23 +386,28 @@ final class Product_Tabs {
 	public static function save_product_tabs( int $post_id, \WP_Post $post ): void {
 		if ( ! Settings::enabled() ) {
 			// Preserve any existing saved tabs when disabled.
+			Event_Log::record( 'product-tabs-save', 'skipped', __( 'Custom Tabs is turned off in Settings; the save was skipped.', 'kitgenix-custom-tabs-for-woocommerce' ), 'feature_disabled' );
 			return;
 		}
 
 		if ( $post->post_type !== 'product' ) {
+			Event_Log::record( 'product-tabs-save', 'skipped', __( 'Post being saved was not a product; no tab data applied.', 'kitgenix-custom-tabs-for-woocommerce' ), 'wrong_post_type' );
 			return;
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			Event_Log::record( 'product-tabs-save', 'error', __( 'Current user did not have permission to edit this product; save blocked.', 'kitgenix-custom-tabs-for-woocommerce' ), 'no_capability' );
 			return;
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$nonce = isset( $_POST[ self::NONCE_NAME ] ) ? sanitize_text_field( wp_unslash( $_POST[ self::NONCE_NAME ] ) ) : '';
 		if ( '' === $nonce ) {
+			Event_Log::record( 'product-tabs-save', 'skipped', __( 'No security token was submitted with the save (likely a cached edit-product page).', 'kitgenix-custom-tabs-for-woocommerce' ), 'nonce_missing' );
 			return;
 		}
 		if ( ! wp_verify_nonce( $nonce, self::NONCE_ACTION ) ) {
+			Event_Log::record( 'product-tabs-save', 'skipped', __( 'Security token did not match (likely a stale/cached edit-product page).', 'kitgenix-custom-tabs-for-woocommerce' ), 'nonce_invalid' );
 			return;
 		}
 
@@ -368,57 +420,14 @@ final class Product_Tabs {
 		if ( ! is_array( $incoming ) ) {
 			delete_post_meta( $post_id, self::META_KEY );
 			self::flush_usage_stats_cache();
+			Event_Log::record( 'product-tabs-save', 'error', __( 'Submitted tab data was not in the expected format; no tabs were saved for this product.', 'kitgenix-custom-tabs-for-woocommerce' ), 'invalid_payload' );
 			return;
 		}
 
-		// Build a sanitized copy of the incoming rows. 'content' is kept raw
-		// here and is later processed with wp_kses_post() to allow limited HTML.
-		$raw = [];
-		foreach ( $incoming as $rk => $r ) {
-			if ( ! is_array( $r ) ) {
-				continue;
-			}
-			$raw[ $rk ] = [
-				'title'    => isset( $r['title'] ) ? sanitize_text_field( (string) $r['title'] ) : '',
-				'nickname' => isset( $r['nickname'] ) ? sanitize_text_field( (string) $r['nickname'] ) : '',
-				'content'  => isset( $r['content'] ) ? (string) $r['content'] : '',
-				'slug'     => isset( $r['slug'] ) ? sanitize_title( (string) $r['slug'] ) : '',
-				'priority' => isset( $r['priority'] ) ? absint( $r['priority'] ) : 0,
-			];
-		}
-
-		$out = [];
-		foreach ( $raw as $row ) {
-			if ( count( $out ) >= $max ) {
-				break;
-			}
-			if ( ! is_array( $row ) ) {
-				continue;
-			}
-
-			$title    = isset( $row['title'] ) ? trim( sanitize_text_field( (string) $row['title'] ) ) : '';
-			$nickname = isset( $row['nickname'] ) ? trim( sanitize_text_field( (string) $row['nickname'] ) ) : '';
-			$content  = isset( $row['content'] ) ? trim( wp_kses_post( (string) $row['content'] ) ) : '';
-			$slug     = isset( $row['slug'] ) ? trim( sanitize_title( (string) $row['slug'] ) ) : '';
-			$priority = isset( $row['priority'] ) ? absint( $row['priority'] ) : 0;
-
-			if ( $title === '' && $content === '' ) {
-				continue;
-			}
-
-			if ( $title === '' ) {
-				// Skip incomplete rows.
-				continue;
-			}
-
-			$out[] = [
-				'title'    => $title,
-				'nickname' => $nickname,
-				'content'  => $content,
-				'slug'     => $slug,
-				'priority' => $priority,
-			];
-		}
+		// Sanitize via the same shared sanitizer global tabs and templates use
+		// (context 'product' also sanitizes the `visibility` sub-fields, but not
+		// `target`, which only applies to global tabs).
+		$out = Settings::sanitize_tabs_rows( $incoming, $max, 'product' );
 
 		if ( empty( $out ) ) {
 			delete_post_meta( $post_id, self::META_KEY );
@@ -472,12 +481,13 @@ final class Product_Tabs {
 			}
 
 			$templates[] = [
-				'title'    => $title,
-				'nickname' => isset( $template['nickname'] ) ? (string) $template['nickname'] : '',
-				'slug'     => isset( $template['slug'] ) ? (string) $template['slug'] : '',
-				'priority' => isset( $template['priority'] ) ? (int) $template['priority'] : 0,
-				'content'  => isset( $template['content'] ) ? (string) $template['content'] : '',
-				'label'    => isset( $template['nickname'] ) && (string) $template['nickname'] !== ''
+				'title'      => $title,
+				'nickname'   => isset( $template['nickname'] ) ? (string) $template['nickname'] : '',
+				'slug'       => isset( $template['slug'] ) ? (string) $template['slug'] : '',
+				'priority'   => isset( $template['priority'] ) ? (int) $template['priority'] : 0,
+				'content'    => isset( $template['content'] ) ? (string) $template['content'] : '',
+				'hide_title' => empty( $template['hide_title'] ) ? 0 : 1,
+				'label'      => isset( $template['nickname'] ) && (string) $template['nickname'] !== ''
 					? (string) $template['nickname']
 					: $title,
 			];

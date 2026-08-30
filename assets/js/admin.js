@@ -165,14 +165,64 @@
 
   function openModal(modal) {
     if (!modal) return;
+    modal.hidden = false;
     modal.setAttribute('aria-hidden', 'false');
-    modal.classList.add('is-open');
   }
 
   function closeModal(modal) {
     if (!modal) return;
+    modal.hidden = true;
     modal.setAttribute('aria-hidden', 'true');
-    modal.classList.remove('is-open');
+  }
+
+  /* ------------------------------------------------------------------
+     Unsaved-change protection
+     Neither the classic product editor nor our own settings forms warn
+     before navigating away with unsaved edits by default (WordPress core's
+     built-in "unsaved changes" prompt only covers the block editor). Any
+     form marked dirty (via a native input/change, or explicitly by the tab
+     manager below for JS-driven edits like add/remove/reorder/duplicate)
+     blocks the tab/window from closing until it's actually submitted.
+  ------------------------------------------------------------------ */
+  var kitgenixSubmittingForm = false;
+  var kitgenixUnsavedGuardBound = false;
+
+  function kitgenixMarkFormDirty(form) {
+    if (form) form.setAttribute('data-kitgenix-custom-tabs-for-woocommerce-dirty', '1');
+  }
+
+  function kitgenixTrackFormSubmit(form) {
+    if (!form || form._kitgenixSubmitTracked) return;
+    form._kitgenixSubmitTracked = true;
+    form.addEventListener('submit', function () {
+      kitgenixSubmittingForm = true;
+      form.removeAttribute('data-kitgenix-custom-tabs-for-woocommerce-dirty');
+    });
+  }
+
+  function initUnsavedChangesGuard() {
+    if (kitgenixUnsavedGuardBound) return;
+    kitgenixUnsavedGuardBound = true;
+
+    window.addEventListener('beforeunload', function (e) {
+      if (kitgenixSubmittingForm) return;
+      if (!document.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-dirty="1"]')) return;
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    });
+
+    // Plain settings forms (e.g. the General Settings tab) have no tab
+    // manager, just native inputs – a generic input/change listener is
+    // enough there since nothing mutates those fields via JS directly.
+    var plainForms = document.querySelectorAll('#kitgenix-tab-settings form');
+    for (var i = 0; i < plainForms.length; i++) {
+      (function (form) {
+        kitgenixTrackFormSubmit(form);
+        form.addEventListener('input', function () { kitgenixMarkFormDirty(form); });
+        form.addEventListener('change', function () { kitgenixMarkFormDirty(form); });
+      })(plainForms[i]);
+    }
   }
 
   function initTabsManager(root) {
@@ -182,6 +232,7 @@
     var modalTitle = null;
     var modalIndex = null;
     var titleEl = null;
+    var hideTitleEl = null;
     var nicknameEl = null;
     var slugEl = null;
     var priorityEl = null;
@@ -189,6 +240,11 @@
     var saveBtn = null;
     var cancelBtn = null;
     var slugGenBtn = null;
+    var visibilityAuthEl = null;
+    var visibilityRolesEl = null;
+    var visibilityStockEl = null;
+    var visibilityPurchasableEl = null;
+    var targetSection = null;
     var onDocKeydownCapture = null;
     var onModalClick = null;
     var onModalKeydown = null;
@@ -214,6 +270,10 @@
     var priorityBase = toInt(cfg().priorityBase, 50);
     var priorityStep = toInt(cfg().priorityStep, 10);
     var templates = parseTemplates(root.getAttribute('data-kitgenix-custom-tabs-for-woocommerce-templates'));
+    var managerType = root.getAttribute('data-kitgenix-custom-tabs-for-woocommerce-manager-type') || 'product';
+    var ownerForm = root.closest('form');
+    kitgenixTrackFormSubmit(ownerForm);
+    function markManagerDirty() { kitgenixMarkFormDirty(ownerForm); }
 
     var slugDirty = false;
 
@@ -238,12 +298,17 @@
     }
 
     function buildDataFromFields(fields) {
+      var targetFieldEl = fields ? fields.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-field="1"]') : null;
       return {
         title: getFieldValue(fields, 'title'),
+        hideTitle: getFieldValue(fields, 'hide_title'),
         nickname: getFieldValue(fields, 'nickname'),
         slug: getFieldValue(fields, 'slug'),
         priority: getFieldValue(fields, 'priority'),
-        content: getFieldContent(fields)
+        content: getFieldContent(fields),
+        visibility: getFieldValue(fields, 'visibility'),
+        target: targetFieldEl ? targetFieldEl.value : '',
+        targetLabels: targetFieldEl ? targetFieldEl.getAttribute('data-kitgenix-custom-tabs-for-woocommerce-target-product-labels') : ''
       };
     }
 
@@ -264,12 +329,23 @@
       }
 
       setFieldValue(fields, 'title', String(data.title || '').trim());
+      setFieldValue(fields, 'hide_title', data.hideTitle ? '1' : '');
       setFieldValue(fields, 'nickname', String(data.nickname || '').trim());
       setFieldValue(fields, 'slug', String(data.slug || '').trim());
       setFieldValue(fields, 'priority', priority);
       setFieldContent(fields, String(data.content || ''));
+      if (data.visibility) setFieldValue(fields, 'visibility', String(data.visibility));
+
+      if (managerType === 'global' && data.target) {
+        var targetFieldEl = fields.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-field="1"]');
+        if (targetFieldEl) {
+          targetFieldEl.value = String(data.target);
+          targetFieldEl.setAttribute('data-kitgenix-custom-tabs-for-woocommerce-target-product-labels', String(data.targetLabels || ''));
+        }
+      }
 
       syncRowFromFields(index);
+      markManagerDirty();
       return index;
     }
 
@@ -289,6 +365,65 @@
       }
 
       insertRowData(data);
+    }
+
+    // Reordering swaps stored PRIORITY values (the actual thing that decides
+    // render order, since tabs are sorted by priority regardless of array/DOM
+    // order) between this row and its current neighbor, then re-sorts the
+    // visible table so displayed order always matches what will render.
+    function getRowsSortedByPriority() {
+      var rows = toArray(tbody.querySelectorAll('[data-kitgenix-custom-tabs-for-woocommerce-row="1"]'));
+      return rows.slice().sort(function (a, b) {
+        var pa = toInt(getFieldValue(getFields(toInt(a.getAttribute('data-index'), 0)), 'priority'), 0);
+        var pb = toInt(getFieldValue(getFields(toInt(b.getAttribute('data-index'), 0)), 'priority'), 0);
+        return pa - pb;
+      });
+    }
+
+    function toArray(nodeList) {
+      return Array.prototype.slice.call(nodeList || []);
+    }
+
+    function resortTableToPriority() {
+      var sorted = getRowsSortedByPriority();
+      sorted.forEach(function (row) { tbody.appendChild(row); });
+    }
+
+    function moveRow(index, direction) {
+      if (index === null) return;
+      var fields = getFields(index);
+      var row = getRow(index);
+      if (!fields || !row) return;
+
+      var sorted = getRowsSortedByPriority();
+      var pos = -1;
+      for (var i = 0; i < sorted.length; i++) {
+        if (toInt(sorted[i].getAttribute('data-index'), null) === index) { pos = i; break; }
+      }
+      if (pos === -1) return;
+
+      var neighborPos = pos + direction;
+      if (neighborPos < 0 || neighborPos >= sorted.length) return; // already at the boundary
+
+      var neighborRow = sorted[neighborPos];
+      var neighborIndex = toInt(neighborRow.getAttribute('data-index'), null);
+      if (neighborIndex === null) return;
+      var neighborFields = getFields(neighborIndex);
+      if (!neighborFields) return;
+
+      var thisPriority = getFieldValue(fields, 'priority').trim() || '0';
+      var neighborPriority = getFieldValue(neighborFields, 'priority').trim() || '0';
+
+      setFieldValue(fields, 'priority', neighborPriority);
+      setFieldValue(neighborFields, 'priority', thisPriority);
+
+      var thisPosNode = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-row-position="1"]');
+      var neighborPosNode = neighborRow.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-row-position="1"]');
+      if (thisPosNode) thisPosNode.textContent = neighborPriority;
+      if (neighborPosNode) neighborPosNode.textContent = thisPriority;
+
+      resortTableToPriority();
+      markManagerDirty();
     }
 
     function ensureTemplateToolbar() {
@@ -356,6 +491,7 @@
 
         insertRowData({
           title: String(templates[index].title || ''),
+          hideTitle: templates[index].hide_title ? '1' : '',
           nickname: String(templates[index].nickname || ''),
           slug: String(templates[index].slug || ''),
           priority: String(templates[index].priority || ''),
@@ -412,9 +548,22 @@
       modalTitle = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-title="1"]');
       modalIndex = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-index="1"]');
       titleEl = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-field="title"]');
+      hideTitleEl = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-field="hide_title"]');
       nicknameEl = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-field="nickname"]');
       slugEl = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-field="slug"]');
       priorityEl = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-field="priority"]');
+      visibilityAuthEl = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-field="visibility_auth"]');
+      visibilityRolesEl = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-field="visibility_roles"]');
+      visibilityStockEl = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-field="visibility_stock"]');
+      visibilityPurchasableEl = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-modal-field="visibility_purchasable"]');
+
+      // Templates never carry live placement rules; global tabs get both
+      // sections, product tabs get visibility only (they're already scoped to
+      // one product, so product/category/tag/type targeting is meaningless).
+      var visibilitySection = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-visibility-section="1"]');
+      targetSection = modal.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-section="1"]');
+      if (visibilitySection) visibilitySection.hidden = (managerType === 'template');
+      if (targetSection) targetSection.hidden = (managerType !== 'global');
 
       // Ensure the modal has a Quill editor markup scaffold.
       dockEditorIntoModal();
@@ -475,7 +624,7 @@
       try {
         onDocKeydownCapture = function (e) {
           if (!modal) return;
-          if (!modal.classList || !modal.classList.contains('is-open')) return;
+          if (modal.hidden) return;
           if (e && (e.key === 'Escape' || e.keyCode === 27)) {
             e.preventDefault();
             requestClose();
@@ -550,6 +699,7 @@
       modalTitle = null;
       modalIndex = null;
       titleEl = null;
+      hideTitleEl = null;
       nicknameEl = null;
       slugEl = null;
       priorityEl = null;
@@ -600,9 +750,13 @@
       wrap.setAttribute('data-index', String(index));
       wrap.innerHTML = '' +
         '<input type="hidden" name="' + base + '[' + index + '][title]" value="" />' +
+        '<input type="hidden" name="' + base + '[' + index + '][hide_title]" value="" />' +
         '<input type="hidden" name="' + base + '[' + index + '][nickname]" value="" />' +
         '<input type="hidden" name="' + base + '[' + index + '][slug]" value="" />' +
         '<input type="hidden" name="' + base + '[' + index + '][priority]" value="0" />' +
+        '<input type="hidden" name="' + base + '[' + index + '][enabled]" value="1" data-kitgenix-custom-tabs-for-woocommerce-enabled-field="1" />' +
+        '<input type="hidden" name="' + base + '[' + index + '][visibility]" value="" data-kitgenix-custom-tabs-for-woocommerce-visibility-field="1" />' +
+        (managerType === 'global' ? '<input type="hidden" name="' + base + '[' + index + '][target]" value="" data-kitgenix-custom-tabs-for-woocommerce-target-field="1" data-kitgenix-custom-tabs-for-woocommerce-target-product-labels="" />' : '') +
         '<textarea name="' + base + '[' + index + '][content]" data-kitgenix-custom-tabs-for-woocommerce-content="1"></textarea>';
       fieldsWrap.appendChild(wrap);
       return wrap;
@@ -647,11 +801,14 @@
       row.setAttribute('data-index', String(index));
       row.innerHTML = '' +
         '<td><strong data-kitgenix-custom-tabs-for-woocommerce-row-title="1">Untitled</strong><div class="kitgenix-custom-tabs-for-woocommerce-tabs-subtitle" data-kitgenix-custom-tabs-for-woocommerce-row-subtitle="1"></div></td>' +
-        '<td><span class="kitgenix-custom-tabs-for-woocommerce-code" data-kitgenix-custom-tabs-for-woocommerce-row-slug="1">—</span></td>' +
+        '<td><span class="kitgenix-custom-tabs-for-woocommerce-code" data-kitgenix-custom-tabs-for-woocommerce-row-slug="1">–</span></td>' +
         '<td><span data-kitgenix-custom-tabs-for-woocommerce-row-position="1">0</span></td>' +
         '<td class="kitgenix-custom-tabs-for-woocommerce-actions">' +
+        '<a href="#" class="button button-small" data-kitgenix-custom-tabs-for-woocommerce-move-up="1" aria-label="' + i18n('moveUp', 'Move up') + '">&#8593;</a> ' +
+        '<a href="#" class="button button-small" data-kitgenix-custom-tabs-for-woocommerce-move-down="1" aria-label="' + i18n('moveDown', 'Move down') + '">&#8595;</a> ' +
         '<a href="#" class="button button-small" data-kitgenix-custom-tabs-for-woocommerce-edit="1">Edit</a> ' +
         '<a href="#" class="button button-small" data-kitgenix-custom-tabs-for-woocommerce-duplicate="1">' + i18n('duplicateTab', 'Duplicate') + '</a> ' +
+        '<a href="#" class="button button-small" data-kitgenix-custom-tabs-for-woocommerce-toggle-enabled="1">' + i18n('disableTab', 'Disable') + '</a> ' +
         '<a href="#" class="button button-link-delete" data-kitgenix-custom-tabs-for-woocommerce-remove="1">Remove</a>' +
         '</td>';
       tbody.appendChild(row);
@@ -666,8 +823,10 @@
       var nickname = getFieldValue(fields, 'nickname').trim();
       var displayTitle = nickname || title;
       var subtitle = (nickname && nickname !== title) ? title : '';
-      var slug = getFieldValue(fields, 'slug').trim() || '—';
+      var slug = getFieldValue(fields, 'slug').trim() || '–';
       var pos = getFieldValue(fields, 'priority').trim() || '0';
+      var enabledRaw = getFieldValue(fields, 'enabled');
+      var enabled = enabledRaw === '' || enabledRaw === '1';
 
       var titleNode = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-row-title="1"]');
       var subNode = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-row-subtitle="1"]');
@@ -678,6 +837,31 @@
       if (slugNode) slugNode.textContent = slug;
       if (posNode) posNode.textContent = pos;
       ensureRowActions(row);
+      syncRowEnabledState(row, enabled);
+    }
+
+    function syncRowEnabledState(row, enabled) {
+      if (!row) return;
+      row.classList.toggle('kitgenix-custom-tabs-for-woocommerce-row-disabled', !enabled);
+
+      var titleCell = row.querySelector('td:first-child');
+      var badge = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-row-disabled-badge="1"]');
+      if (!enabled) {
+        if (!badge && titleCell) {
+          badge = document.createElement('span');
+          badge.className = 'kitgenix-badge neutral';
+          badge.setAttribute('data-kitgenix-custom-tabs-for-woocommerce-row-disabled-badge', '1');
+          badge.textContent = i18n('disabledBadge', 'Disabled');
+          titleCell.appendChild(badge);
+        }
+      } else if (badge) {
+        badge.remove();
+      }
+
+      var toggleBtn = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-toggle-enabled="1"]');
+      if (toggleBtn) {
+        toggleBtn.textContent = enabled ? i18n('disableTab', 'Disable') : i18n('enableTab', 'Enable');
+      }
     }
 
     function clearEmptyMessage() {
@@ -700,10 +884,14 @@
       td.colSpan = 4;
       td.className = 'kitgenix-custom-tabs-for-woocommerce-empty-cell';
 
-      var span = document.createElement('span');
-      span.className = 'description';
-      span.textContent = String(msg);
-      td.appendChild(span);
+      var emptyState = document.createElement('div');
+      emptyState.className = 'kitgenix-empty-state';
+
+      var desc = document.createElement('p');
+      desc.className = 'kitgenix-empty-state-desc';
+      desc.textContent = String(msg);
+      emptyState.appendChild(desc);
+      td.appendChild(emptyState);
       tr.appendChild(td);
 
       tbody.appendChild(tr);
@@ -736,13 +924,23 @@
       modalIndex.value = (index === null) ? '' : String(index);
       if (modalTitle) modalTitle.textContent = (index === null) ? 'Add Tab' : 'Edit Tab';
 
+      // Advanced settings (position/nickname/slug/hide title/visibility) start
+      // collapsed for a brand-new tab, but open automatically when editing one
+      // that already has any of those set, so nothing configured gets hidden.
+      try {
+        var advanced = modal.querySelector('.kitgenix-custom-tabs-for-woocommerce-advanced');
+        if (advanced) advanced.open = (index !== null);
+      } catch (_eAdv) {}
+
       var title = fields ? getFieldValue(fields, 'title') : '';
+      var hideTitle = fields ? getFieldValue(fields, 'hide_title') : '';
       var nickname = fields ? getFieldValue(fields, 'nickname') : '';
       var slug = fields ? getFieldValue(fields, 'slug') : '';
       var pos = fields ? getFieldValue(fields, 'priority') : '';
       var content = fields ? getFieldContent(fields) : '';
 
       titleEl.value = title;
+      if (hideTitleEl) hideTitleEl.checked = (hideTitle === '1');
       nicknameEl.value = nickname;
       slugEl.value = slug;
 
@@ -755,7 +953,122 @@
       ensureVisualEditorReady(contentEl);
       setEditorContent(contentEl, content);
 
+      var visibility = parseJsonObject(fields ? getFieldValue(fields, 'visibility') : '') || {};
+      if (visibilityAuthEl) visibilityAuthEl.value = String(visibility.auth || '');
+      if (visibilityRolesEl) setMultiSelectValues(visibilityRolesEl, visibility.roles);
+      if (visibilityStockEl) visibilityStockEl.value = String(visibility.stock || '');
+      if (visibilityPurchasableEl) visibilityPurchasableEl.value = String(visibility.purchasable || '');
+
+      if (targetSection && managerType === 'global') {
+        var targetFieldEl = fields ? fields.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-field="1"]') : null;
+        var target = parseJsonObject(targetFieldEl ? targetFieldEl.value : '') || {};
+        var labels = parseJsonObject(targetFieldEl ? targetFieldEl.getAttribute('data-kitgenix-custom-tabs-for-woocommerce-target-product-labels') : '') || {};
+        populateTargetSection(target, labels);
+      }
+
       try { titleEl.focus(); } catch (_e) {}
+    }
+
+    function parseJsonObject(raw) {
+      if (!raw) return null;
+      try {
+        var parsed = JSON.parse(String(raw));
+        return (parsed && typeof parsed === 'object') ? parsed : null;
+      } catch (_e) {
+        return null;
+      }
+    }
+
+    function setMultiSelectValues(select, values) {
+      if (!select) return;
+      var wanted = {};
+      (Array.isArray(values) ? values : []).forEach(function (v) { wanted[String(v)] = true; });
+      toArray(select.options).forEach(function (opt) {
+        opt.selected = !!wanted[String(opt.value)];
+      });
+    }
+
+    function getMultiSelectValues(select) {
+      if (!select) return [];
+      return toArray(select.selectedOptions || select.options).filter(function (opt) {
+        return opt.selected;
+      }).map(function (opt) { return opt.value; });
+    }
+
+    function populateTargetSection(target, labels) {
+      if (!targetSection) return;
+      target = target || {};
+      labels = labels || {};
+
+      ['products', 'categories', 'tags', 'types'].forEach(function (dimension) {
+        var row = targetSection.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-row="' + dimension + '"]');
+        if (!row) return;
+        var modeEl = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-mode="' + dimension + '"]');
+        var valuesEl = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-values="' + dimension + '"]');
+        var dim = target[dimension] || {};
+        var exclude = Array.isArray(dim.exclude) ? dim.exclude : [];
+        var include = Array.isArray(dim.include) ? dim.include : [];
+        var mode = exclude.length ? 'exclude' : 'include';
+        var values = exclude.length ? exclude : include;
+
+        if (modeEl) modeEl.value = mode;
+        if (!valuesEl) return;
+
+        if ('products' === dimension) {
+          // Options for an AJAX-search select don't exist until chosen, so
+          // rebuild them from the resolved id->title label map before
+          // marking anything selected.
+          valuesEl.innerHTML = '';
+          values.forEach(function (id) {
+            var opt = document.createElement('option');
+            opt.value = String(id);
+            opt.textContent = String(labels[String(id)] || ('#' + id));
+            opt.selected = true;
+            valuesEl.appendChild(opt);
+          });
+          try {
+            if (window.jQuery) {
+              window.jQuery(valuesEl).trigger('change');
+            }
+          } catch (_eSelect2) {}
+        } else {
+          setMultiSelectValues(valuesEl, values);
+        }
+      });
+    }
+
+    function serializeTargetSection() {
+      var target = {
+        products: { include: [], exclude: [] },
+        categories: { include: [], exclude: [] },
+        tags: { include: [], exclude: [] },
+        types: { include: [], exclude: [] }
+      };
+      if (!targetSection) return target;
+
+      ['products', 'categories', 'tags', 'types'].forEach(function (dimension) {
+        var row = targetSection.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-row="' + dimension + '"]');
+        if (!row) return;
+        var modeEl = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-mode="' + dimension + '"]');
+        var valuesEl = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-values="' + dimension + '"]');
+        var mode = modeEl && modeEl.value === 'exclude' ? 'exclude' : 'include';
+        var values = getMultiSelectValues(valuesEl);
+        target[dimension][mode] = values;
+      });
+
+      return target;
+    }
+
+    function collectTargetProductLabels() {
+      var labels = {};
+      if (!targetSection) return labels;
+      var row = targetSection.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-row="products"]');
+      var valuesEl = row ? row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-values="products"]') : null;
+      if (!valuesEl) return labels;
+      toArray(valuesEl.options).forEach(function (opt) {
+        labels[String(opt.value)] = String(opt.textContent || opt.value);
+      });
+      return labels;
     }
 
     function saveFromModal() {
@@ -794,12 +1107,30 @@
 
       var fields = ensureFields(index);
       setFieldValue(fields, 'title', title);
+      setFieldValue(fields, 'hide_title', (hideTitleEl && hideTitleEl.checked) ? '1' : '');
       setFieldValue(fields, 'nickname', nickname);
       setFieldValue(fields, 'slug', slug);
       setFieldValue(fields, 'priority', pos);
       setFieldContent(fields, content);
 
+      var visibility = {
+        auth: visibilityAuthEl ? String(visibilityAuthEl.value || '') : '',
+        roles: visibilityRolesEl ? getMultiSelectValues(visibilityRolesEl) : [],
+        stock: visibilityStockEl ? String(visibilityStockEl.value || '') : '',
+        purchasable: visibilityPurchasableEl ? String(visibilityPurchasableEl.value || '') : ''
+      };
+      setFieldValue(fields, 'visibility', JSON.stringify(visibility));
+
+      if (targetSection && managerType === 'global') {
+        var targetFieldEl = fields.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-field="1"]');
+        if (targetFieldEl) {
+          targetFieldEl.value = JSON.stringify(serializeTargetSection());
+          targetFieldEl.setAttribute('data-kitgenix-custom-tabs-for-woocommerce-target-product-labels', JSON.stringify(collectTargetProductLabels()));
+        }
+      }
+
       syncRowFromFields(index);
+      markManagerDirty();
 
       requestClose();
     }
@@ -825,6 +1156,42 @@
         return;
       }
 
+      var moveUp = t.closest('[data-kitgenix-custom-tabs-for-woocommerce-move-up="1"]');
+      if (moveUp) {
+        e.preventDefault();
+        var rowUp = moveUp.closest('[data-kitgenix-custom-tabs-for-woocommerce-row="1"]');
+        if (!rowUp) return;
+        moveRow(toInt(rowUp.getAttribute('data-index'), null), -1);
+        try { moveUp.focus(); } catch (_eFocus1) {}
+        return;
+      }
+
+      var moveDown = t.closest('[data-kitgenix-custom-tabs-for-woocommerce-move-down="1"]');
+      if (moveDown) {
+        e.preventDefault();
+        var rowDown = moveDown.closest('[data-kitgenix-custom-tabs-for-woocommerce-row="1"]');
+        if (!rowDown) return;
+        moveRow(toInt(rowDown.getAttribute('data-index'), null), 1);
+        try { moveDown.focus(); } catch (_eFocus2) {}
+        return;
+      }
+
+      var toggleEnabled = t.closest('[data-kitgenix-custom-tabs-for-woocommerce-toggle-enabled="1"]');
+      if (toggleEnabled) {
+        e.preventDefault();
+        var rowToggle = toggleEnabled.closest('[data-kitgenix-custom-tabs-for-woocommerce-row="1"]');
+        if (!rowToggle) return;
+        var idxToggle = toInt(rowToggle.getAttribute('data-index'), null);
+        if (idxToggle === null) return;
+        var fieldsToggle = getFields(idxToggle);
+        if (!fieldsToggle) return;
+        var nowEnabled = getFieldValue(fieldsToggle, 'enabled') !== '1';
+        setFieldValue(fieldsToggle, 'enabled', nowEnabled ? '1' : '0');
+        syncRowEnabledState(rowToggle, nowEnabled);
+        markManagerDirty();
+        return;
+      }
+
       var rm = t.closest('[data-kitgenix-custom-tabs-for-woocommerce-remove="1"]');
       if (rm) {
         e.preventDefault();
@@ -842,6 +1209,7 @@
 
         try { row2.remove(); } catch (_e4) {}
         maybeShowEmptyMessage();
+        markManagerDirty();
         return;
       }
 
@@ -908,10 +1276,179 @@
     } catch (_e) {}
   }
 
+  /* ------------------------------------------------------------------
+     Click-to-sort table headers (Global Tabs / Templates management tables)
+     Purely a display reorder of the visible <tr> rows – it never touches the
+     hidden field values or their own container's order, so it can't affect
+     what gets saved (each row's actual render order is decided by its own
+     stored `priority` value, not array/DOM position). No manager-dirty marking.
+  ------------------------------------------------------------------ */
+  function initSortableTables() {
+    var tables = document.querySelectorAll('[data-kitgenix-sortable-table="1"]');
+    for (var i = 0; i < tables.length; i++) {
+      bindSortableTable(tables[i]);
+    }
+  }
+
+  function bindSortableTable(table) {
+    if (!table || table._kitgenixSortBound) return;
+    table._kitgenixSortBound = true;
+
+    var tbody = table.querySelector('tbody');
+    if (!tbody) return;
+
+    var headers = toArray(table.querySelectorAll('th[data-kitgenix-sort-key]'));
+    var state = { key: null, dir: 1 };
+
+    function cellValue(row, key) {
+      if (key === 'priority') {
+        var posEl = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-row-position="1"]');
+        return toInt(posEl ? posEl.textContent : '0', 0);
+      }
+      var selector = key === 'title'
+        ? '[data-kitgenix-custom-tabs-for-woocommerce-row-title="1"]'
+        : '[data-kitgenix-custom-tabs-for-woocommerce-row-slug="1"]';
+      var el = row.querySelector(selector);
+      return (el ? el.textContent : '').toLowerCase();
+    }
+
+    headers.forEach(function (th) {
+      th.setAttribute('tabindex', '0');
+      th.setAttribute('role', 'button');
+      th.setAttribute('aria-sort', 'none');
+
+      function activate() {
+        var key = th.getAttribute('data-kitgenix-sort-key');
+        state.dir = (state.key === key) ? -state.dir : 1;
+        state.key = key;
+
+        headers.forEach(function (h) {
+          h.classList.remove('kitgenix-sort-asc', 'kitgenix-sort-desc');
+          if (h === th) {
+            h.classList.add(state.dir === 1 ? 'kitgenix-sort-asc' : 'kitgenix-sort-desc');
+            h.setAttribute('aria-sort', state.dir === 1 ? 'ascending' : 'descending');
+          } else {
+            h.setAttribute('aria-sort', 'none');
+          }
+        });
+
+        var rows = toArray(tbody.querySelectorAll('[data-kitgenix-custom-tabs-for-woocommerce-row="1"]'));
+        rows.sort(function (a, b) {
+          var va = cellValue(a, key);
+          var vb = cellValue(b, key);
+          if (va < vb) return -1 * state.dir;
+          if (va > vb) return 1 * state.dir;
+          return 0;
+        });
+        rows.forEach(function (row) { tbody.appendChild(row); });
+      }
+
+      th.addEventListener('click', activate);
+      th.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          activate();
+        }
+      });
+    });
+  }
+
+  function initNoticeDismiss() {
+    var closers = document.querySelectorAll('.kitgenix-notice-close');
+    for (var i = 0; i < closers.length; i++) {
+      closers[i].addEventListener('click', function (e) {
+        var notice = e.currentTarget.closest('.kitgenix-notice');
+        if (notice) notice.remove();
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Portability: JSON import preview
+     Reads the chosen file client-side (it never leaves the browser until
+     the admin actually submits) and shows a short summary of what it
+     contains before Replace/Merge is committed server-side. The existing
+     server-side validation/sanitization in Portability::handle_import_json()
+     is unchanged and remains authoritative – this is a preview only.
+  ------------------------------------------------------------------ */
+  function initImportPreview() {
+    var fileInput = document.getElementById('kitgenix_ctw_import_json_file');
+    var preview = document.getElementById('kitgenix-ctw-import-json-preview');
+    var submitBtn = document.getElementById('kitgenix-ctw-import-json-submit');
+    if (!fileInput || !preview) return;
+
+    if (submitBtn) submitBtn.disabled = true;
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function showError(message) {
+      preview.hidden = false;
+      preview.innerHTML = '<div class="kitgenix-notice kitgenix-notice-error"><div class="kitgenix-notice-body"><p class="kitgenix-notice-text"></p></div></div>';
+      preview.querySelector('.kitgenix-notice-text').textContent = message;
+      if (submitBtn) submitBtn.disabled = true;
+    }
+
+    function showPreview(data) {
+      var pluginId = (data && typeof data.plugin === 'string') ? data.plugin : '';
+      var expectedId = 'kitgenix-custom-tabs-for-woocommerce';
+      var settings = (data && typeof data.settings === 'object' && data.settings) ? data.settings : {};
+      var globalTabs = Array.isArray(data && data.global_tabs) ? data.global_tabs : [];
+      var templates = Array.isArray(data && data.templates) ? data.templates : [];
+
+      var html = '<div class="kitgenix-notice ' + (pluginId && pluginId !== expectedId ? 'kitgenix-notice-warning' : 'kitgenix-notice-info') + '">';
+      html += '<div class="kitgenix-notice-body"><p class="kitgenix-notice-title">Import preview</p>';
+      if (pluginId && pluginId !== expectedId) {
+        html += '<p class="kitgenix-notice-text">This file was exported from a different plugin/slug (<code>' + escapeHtml(pluginId) + '</code>). The import will likely be rejected on submit.</p>';
+      }
+      html += '<ul style="margin:6px 0 0 18px;list-style:disc;">';
+      html += '<li>' + globalTabs.length + ' global tab(s)</li>';
+      html += '<li>' + templates.length + ' template(s)</li>';
+      html += '<li>' + Object.keys(settings).length + ' setting key(s)</li>';
+      if (data && data.exported_at) html += '<li>Exported ' + escapeHtml(String(data.exported_at)) + '</li>';
+      html += '</ul></div></div>';
+
+      preview.hidden = false;
+      preview.innerHTML = html;
+      if (submitBtn) submitBtn.disabled = false;
+    }
+
+    fileInput.addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      if (!file) {
+        preview.hidden = true;
+        preview.innerHTML = '';
+        if (submitBtn) submitBtn.disabled = true;
+        return;
+      }
+      if (!window.FileReader) {
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          showPreview(JSON.parse(String(reader.result || '')));
+        } catch (e) {
+          showError('This file is not valid JSON, so it cannot be imported.');
+        }
+      };
+      reader.onerror = function () { showError('Could not read this file.'); };
+      reader.readAsText(file);
+    });
+  }
+
   function boot() {
     var roots = document.querySelectorAll('[data-kitgenix-custom-tabs-for-woocommerce-manager="1"]');
     for (var i = 0; i < roots.length; i++) initTabsManager(roots[i]);
     initPositionPresetSync();
+    initNoticeDismiss();
+    initImportPreview();
+    initSortableTables();
+    initUnsavedChangesGuard();
   }
 
   if (document.readyState === 'loading') {
