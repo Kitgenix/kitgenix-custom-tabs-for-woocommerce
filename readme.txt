@@ -1,292 +1,230 @@
 === Kitgenix Custom Tabs for WooCommerce ===
 Contributors: kitgenix
 Donate link: https://www.paypal.com/donate/?hosted_button_id=KALF36K6JJ9B2
-Tags: woocommerce, product tabs, custom tabs, global tabs, tab manager, product page tabs, additional information tab, product description, sizing guide, reusable content, shortcode, product editor
+Tags: woocommerce, product tabs, custom product tabs, global tabs, product content
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.1
 Stable tag: 2.0.0
-Requires Plugins: woocommerce
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-Plugin URI: https://wordpress.org/plugins/kitgenix-custom-tabs-for-woocommerce/
-Author Plugin URI: https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce
-Author: Kitgenix
-Author URI: https://kitgenix.com/
-Documentation URI: https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/documentation
-Support URI: https://wordpress.org/support/plugin/kitgenix-custom-tabs-for-woocommerce/
-Author Support URI: https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/support
-Feature Request URI: https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/feature-request
 
-Add custom product tabs to WooCommerce with global tabs, targeting rules, visibility conditions, and reusable templates.
+Create WooCommerce product tabs with per-product content, global targeting, visibility rules, templates and bulk tools.
 
 == Description ==
 
-**Kitgenix Custom Tabs for WooCommerce** adds extra tabs to the WooCommerce product page – sizing guides, warranty terms, ingredient lists, care instructions, or anything else the built-in Description, Additional Information, and Reviews tabs don't cover. Tabs are created and managed from the WooCommerce product editor itself, so there's no separate interface to learn for everyday work, while a dedicated Kitgenix admin screen handles store-wide tabs, reusable content, and bulk actions.
+**Kitgenix Custom Tabs for WooCommerce** is a WooCommerce product tab manager for adding structured information to product pages without editing theme templates. Create product-specific tabs, reusable global tabs and saved content templates for size guides, technical specifications, ingredients, care instructions, warranties, delivery information, FAQs and other product content.
 
-This plugin is built for merchants who need tab content to differ by product, by category, or by audience – not just one fixed set of tabs pinned to every product regardless of context.
+The plugin uses WooCommerce's native product-tab filter, so frontend output remains part of the normal WooCommerce tab system rather than replacing the entire product page with a proprietary layout.
 
-= Key Features =
+It is suitable for stores that need different content on individual products as well as stores that need the same tab across a product category, tag, product type or carefully targeted group of products.
 
-* **Per-product tabs** – add title, optional nickname, optional slug, position, and rich content to any product from Product data → Custom Tabs, without leaving the product editor.
-* **Global tabs with targeting** – create a tab once and apply it to every product, or restrict it by specific products, categories, tags, and/or product types, with independent Include/Exclude rules per dimension. Leave everything empty and it applies store-wide, exactly like a simple global tab.
-* **Visibility conditions** – show or hide any product or global tab based on visitor login state, user role, stock status, or purchasability, without needing a separate rules-engine plugin.
-* **Reusable templates** – save common tab content once (sizing guide, warranty, ingredients) and insert it into any product or global tab in one click, or output it anywhere with the `[kitgenix_tab]` shortcode.
-* **Bulk-apply from the Products list** – select multiple products and apply a saved template to all of them in one WooCommerce bulk action, skipping any product already at the tab limit.
-* **Rich-text editing, self-hosted** – tab content is written in a Quill-powered modal editor bundled with the plugin, so wp-admin never depends on a third-party CDN to edit a product.
-* **Reorder, enable/disable, duplicate** – keyboard-accessible Move up/down controls swap actual stored priority values (not just visual order); every tab, global tab, and template can be toggled off without deleting it, or duplicated as a starting point for a variation.
-* **Import/export** – full-fidelity JSON export/import for settings, global tabs, and templates (including visibility and targeting rules, with a preview before you commit), plus a simpler spreadsheet-friendly CSV format for Global Tabs and Templates.
-* **Usage-aware, cache-friendly** – templates live in their own non-autoloaded option so a large template library never adds weight to ordinary page loads, and tab matching runs against the already-loaded product object with no extra database queries per tab.
+Developed by [Kitgenix](https://kitgenix.com/).
 
-= Built for WooCommerce =
+= WooCommerce Custom Tab Features =
 
-Tabs render through WooCommerce's own `woocommerce_product_tabs` filter, alongside the Description, Additional Information, and Reviews tabs – there's no custom markup or separate template system to fight with your theme.
+* Add multiple custom tabs to an individual WooCommerce product.
+* Create global tabs that can be reused across the catalogue.
+* Include or exclude selected products.
+* Include or exclude product categories.
+* Include or exclude product tags.
+* Target simple, variable, grouped or external product types.
+* Restrict tab visibility by logged-in/logged-out state.
+* Restrict tab visibility by WordPress user role.
+* Restrict tabs by stock status and product purchasability.
+* Set explicit tab priorities and use configurable default priority/step values.
+* Enable, disable and duplicate tabs without discarding the original content.
+* Choose whether the heading inside the tab panel is displayed.
+* Optionally process WordPress shortcodes inside tab content.
+* Edit rich content with the locally bundled Quill editor.
+* Save reusable content templates.
+* Apply a saved template to selected products using WooCommerce bulk actions.
+* Render an enabled saved template with the `[kitgenix_tab]` shortcode.
+* Export/import full configuration with JSON.
+* Export/import core Global Tab or Template fields with CSV.
+* Keep a local capped activity log for operational events and diagnostics.
+* Declare WooCommerce High-Performance Order Storage compatibility.
 
-Targeting and visibility rules can match by product type (simple, variable, grouped, external), so a tab can be scoped to, for example, only variable products or only simple products. Stock-status and purchasability conditions read the product's own state directly, so a "back in stock" or "in stock only" tab stays accurate without any extra configuration.
+= Per-Product Tabs =
 
-= How It Works =
+Product-specific tabs are managed from the WooCommerce product editing experience. Each product can have its own collection of tab records containing the title, content, slug, priority, enabled state and presentation/visibility settings supported by the plugin.
 
-1. Add a tab to an individual product from Product data → Custom Tabs in the product editor.
-2. Optionally, create store-wide tabs under Kitgenix → Custom Tabs → Global Tabs, and target them to specific products, categories, tags, or product types.
-3. Optionally, save reusable snippets under Kitgenix → Custom Tabs → Templates, then insert them into products or global tabs, or embed one anywhere with `[kitgenix_tab slug="..."]`.
-4. Optionally, restrict any tab with visitor login state, role, stock status, or purchasability using the tab editor's Visibility conditions section.
-5. Use Kitgenix → Custom Tabs → Settings to control the maximum tabs per product, default positioning, shortcode support, and heading visibility, and use the Portability tab to export or import everything as JSON or CSV.
+This is useful for information that is unique to a single item: a model-specific specification, one-off installation notes, an individual warranty statement or product-specific downloadable guidance.
 
-= Compatibility =
+= Global Product Tabs =
 
-* Works with WooCommerce's classic (meta-box) Product Data panel, which is the supported product-editing screen for WooCommerce 11.0+ following the removal of the experimental block-based Product Editor Beta.
-* Declares compatibility with WooCommerce's High-Performance Order Storage (HPOS / custom order tables) via `FeaturesUtil::declare_compatibility()`. The plugin never reads or writes order data.
-* Tab targeting supports simple, variable, grouped, and external product types.
-* The bundled rich-text editor (Quill) is loaded entirely from your own site – nothing is fetched from a CDN.
+Global Tabs let one piece of content appear across many products without copying and maintaining it on every product separately.
 
-= Developer Features =
+A global tab can be left broadly applicable or narrowed with Include and Exclude rules. Targeting dimensions include products, categories, tags and product types. Exclusions take precedence. Where several Include dimensions are populated, the product must satisfy each populated dimension, while selected values within an individual dimension act as alternatives.
 
-* Filters to adjust tab eligibility, priority, and content per product/visitor: `kitgenix_custom_tabs_for_woocommerce_tab_eligible`, `kitgenix_custom_tabs_for_woocommerce_tab_priority`, `kitgenix_custom_tabs_for_woocommerce_tab_content`, and `kitgenix_custom_tabs_for_woocommerce_shortcode_html`.
-* A single matching engine, `Tab_Matcher::is_eligible()`, used by both the frontend renderer and any custom integration, so targeting/visibility logic never has to be reimplemented.
-* JSON export/import schema versioning, and a shared sanitizer used by manual saves, JSON import, CSV import, and the bulk-apply action, so imported content is never trusted as pre-sanitised.
+That allows combinations such as "show this size guide on variable products in the clothing category except these three products" or "show this compliance note only on products carrying a specific tag."
 
-See the "Developers" section below for the full list of hooks, data structures, and admin-post actions.
+= Customer and Product Visibility Rules =
+
+Product-specific and global tabs can also be restricted by context. The code supports rules based on login state, WordPress role, stock state and whether the product is purchasable.
+
+These rules can be used for trade-only information, logged-in customer resources, stock-dependent messaging or product instructions that only make sense while an item can be purchased.
+
+= Rich Content and Shortcodes =
+
+The admin editor uses a locally bundled Quill editor, allowing formatted content without loading the editor from a third-party JavaScript CDN. Stored tab content is sanitised through WordPress before output.
+
+Shortcode processing inside tab content is optional. Leaving shortcode processing disabled is useful where stores want plain controlled content; enabling it allows existing WordPress shortcodes to be embedded in tab content.
+
+= Reusable Templates =
+
+Templates provide a separate library for frequently repeated tab content. A template can be inserted while editing tabs, applied to selected products through WooCommerce bulk actions or rendered elsewhere with the template shortcode.
+
+Example:
+
+`[kitgenix_tab slug="warranty-info"]`
+
+The shortcode renders enabled saved templates. It is not a dynamic lookup for a product's private per-product tab or a conditional Global Tab.
+
+= JSON and CSV Import/Export =
+
+JSON is the full-fidelity portability format. It can carry plugin settings, Global Tabs, Templates, targeting conditions and visibility rules and can be used for controlled migration between stores.
+
+CSV is intended for spreadsheet-friendly editing of the core Global Tab or Template fields such as title, nickname, slug, priority, enabled state and content. Targeting and visibility rules are not represented in the CSV format, so JSON should be used when those rules must be preserved.
+
+Upload size is bounded by the plugin to reduce the risk of oversized import requests.
+
+= WooCommerce-Native Output =
+
+Frontend tabs are inserted with WooCommerce's `woocommerce_product_tabs` filter. That means the active WooCommerce-compatible theme continues to control the surrounding tab layout and normal product-page behaviour.
+
+The plugin does not need to read or write WooCommerce orders in order to display product tabs. Product-specific tab data is stored against products, while global configuration and templates use plugin options.
+
+= Typical Store Uses =
+
+* Product size guides shared across a category.
+* Warranty or guarantee information.
+* Technical datasheets and product specifications.
+* Ingredients, allergens or material information.
+* Care and maintenance instructions.
+* Delivery and collection information.
+* Trade-only technical notes for logged-in roles.
+* Product FAQs or installation instructions.
+* Reusable compliance or safety information.
 
 == Installation ==
 
-1. Make sure WooCommerce is installed and active – this plugin requires it and will deactivate itself with a notice if it isn't.
-2. Upload the plugin folder to `/wp-content/plugins/` (or install it via Plugins → Add New → search for "Kitgenix Custom Tabs").
-3. Activate the plugin. You'll be redirected to Kitgenix → Custom Tabs to configure it.
-4. Edit any product: Products → Edit → Product data → Custom Tabs, and add your first tab.
+1. Install and activate WooCommerce.
+2. Upload the plugin to `/wp-content/plugins/`, or install it through Plugins → Add Plugin.
+3. Activate **Kitgenix Custom Tabs for WooCommerce**. The plugin prevents activation if WooCommerce is not active.
+4. Go to Kitgenix → Custom Tabs to configure settings, Global Tabs, Templates, Portability, Support, and the activity log.
+5. To create a product-specific tab, edit a WooCommerce product and open Product data → Custom Tabs.
+
+== Compatibility ==
+
+* WordPress 6.0 or later; tested up to WordPress 7.1.
+* PHP 8.1 or later.
+* WooCommerce 10.0 or later; tested with WooCommerce 11.0.1.
+* Declares WooCommerce HPOS compatibility.
+* Uses the native `woocommerce_product_tabs` filter for frontend output.
+* Product-specific tabs are stored as product meta; the plugin does not read or write WooCommerce order data.
 
 == External Services ==
 
-This plugin can connect to the WordPress.org Plugins API when you view the shared Kitgenix admin hub page (Kitgenix → the main hub screen listing all Kitgenix plugins). It uses WordPress core's `plugins_api()` function to look up, for each installed or listed Kitgenix plugin slug, its active install count, star rating, and banner/icon artwork, purely so the hub page can display that information. This happens only when an administrator views that specific admin screen – it is never triggered on the frontend or on any other wp-admin page. Results are cached in WordPress transients (`kitgenix_hub_wporg_active_installs_v1`, `kitgenix_hub_wporg_ratings_v1`, `kitgenix_hub_wporg_media_v1`) for one day (`DAY_IN_SECONDS`) to minimise repeated requests. No customer, order, or product data is sent — only the plugin slugs being looked up. This is the same `plugins_api()` call WordPress core itself uses on the Plugins → Add New screen, made to wordpress.org, whose terms are available at https://wordpress.org/about/privacy/.
+The product-tab functionality is self-contained, but two external services can be contacted on specific plugin admin screens.
 
-The "Products" field in a global tab's targeting rules uses WooCommerce's own built-in AJAX product search (the same `woocommerce_json_search_products` endpoint WooCommerce's core "Linked Products" fields use) to search your own store's products as you type. This is a request to your own site, not a third party – no data leaves your server.
+= WordPress.org Plugin Directory =
 
-The rich-text tab editor is powered by Quill (https://quilljs.com/), bundled locally in `assets/vendor/quill/` (BSD-3-Clause licensed) and loaded only from your own site – it is not fetched from a CDN or any external host.
+When an authorised administrator opens the top-level **Kitgenix Hub**, the plugin uses WordPress's `plugins_api()` function to request public metadata for a fixed list of Kitgenix plugins, including active-install counts, ratings, and available banner/icon artwork. Results are cached for approximately one day. Remote artwork returned by WordPress.org may also be requested by the administrator's browser when displayed.
 
-== Developers ==
+The plugin does not intentionally send customer, order, product, or tab-content data in these requests. Normal network information such as IP addresses and HTTP request metadata may be visible to WordPress.org.
 
-Text domain:
-- `kitgenix-custom-tabs-for-woocommerce`
+Service: https://wordpress.org/plugins/
+Privacy policy: https://wordpress.org/about/privacy/
 
-Settings option:
-- `kitgenix_custom_tabs_for_woocommerce_settings`
+= Google Fonts =
 
-Settings group (Settings API):
-- `kitgenix_custom_tabs_for_woocommerce_settings_group`
+The shared Kitgenix wp-admin stylesheet imports the **Inter** and **Manrope** font families from Google Fonts on plugin admin screens where that stylesheet is loaded. The administrator's browser may therefore contact Google's font infrastructure, which can receive normal request metadata such as IP address and browser information.
 
-Settings keys (stored inside the main option array):
-- `enabled` (bool/int)
-- `max_tabs` (int) – per-product-page cap across global + product-specific tabs combined
-- `allow_shortcodes` (bool/int)
-- `priority_base` (int)
-- `priority_step` (int)
-- `hide_tab_heading` (bool/int)
-- `global_tabs` (array of tab rows – see "Tab row shape" below)
+Service: https://fonts.google.com/
+Privacy information: https://developers.google.com/fonts/faq/privacy
+Terms: https://policies.google.com/terms
 
-Templates option (separate, non-autoloaded – see "Why templates moved to their own option" below):
-- `kitgenix_custom_tabs_for_woocommerce_templates` (array of tab rows, without `visibility`/`target`)
+No external service is required to render custom tabs on public WooCommerce product pages.
 
-Tab row shape (product-specific and global tabs):
-- `title`, `nickname`, `content`, `slug`, `priority` – unchanged since 1.0
-- `enabled` (0/1, default 1 – a row saved before 2.0.0 has no `enabled` key at all, which is treated as enabled, so no existing tab is silently hidden by upgrading)
-- `visibility` (object): `auth` ('' | logged_in | logged_out), `roles` (array of role slugs, any-match), `stock` ('' | in_stock | out_of_stock), `purchasable` ('' | yes | no)
-- `target` (global tabs only – object): `products`, `categories`, `tags`, `types`, each `{include: [...], exclude: [...]}`. Exclude always wins; an empty `include` list on a dimension means "no restriction" for that dimension. See `KitgenixCustomTabsForWooCommerce\Core\Tab_Matcher`.
+== Privacy & Security ==
 
-Why templates moved to their own option:
-- Templates are admin-only (never read on the frontend) and can grow into a sizeable library of rich-HTML snippets. Keeping them in the main autoloaded settings option meant that whole library was loaded into memory on *every* request, including pages with no products at all. `Settings::ensure_defaults()` runs a one-time, idempotent migration (`migrate_templates_option()`) that moves an existing `tab_templates` value out of the old option into the new one and removes the old key – nothing is lost on upgrade.
+The plugin does not include Kitgenix telemetry or send customer, order, product, or tab content to Kitgenix servers.
 
-Sanitization behavior:
-- The sanitize callback merges submitted values into the existing option, so saving one settings tab/form does not wipe values from other tabs.
-- `Settings::sanitize_tabs_rows( $raw, $max, $context )` is the single sanitizer used by product tabs, global tabs, templates, and both import paths (JSON/CSV) – `$context` is `'product'`, `'global'`, or `'template'` and controls which of `visibility`/`target` are collected, so all four save/import paths can never drift out of sync with each other.
+Its local activity log stores a timestamp, event context, outcome, short note, and event code. It does not intentionally record IP addresses, passwords, payment data, or customer order information. The log can be cleared from the plugin's Log screen.
 
-Post meta:
-- `kitgenix_custom_tabs_for_woocommerce_tabs` (array)
+Tab HTML is sanitised with WordPress APIs before storage/output. Administrative saves, imports, exports, and other sensitive actions use capability and nonce checks appropriate to their context.
 
-Transients:
-- `kitgenix_custom_tabs_for_woocommerce_do_activation_redirect` (short-lived activation redirect flag)
-- `kitgenix_custom_tabs_for_woocommerce_usage_stats` (cached support-tab usage totals)
-- `kitgenix_hub_wporg_active_installs_v1` (Kitgenix hub cache; active install counts)
-- `kitgenix_hub_wporg_ratings_v1` (Kitgenix hub cache; ratings percentage)
-- `kitgenix_hub_wporg_media_v1` (Kitgenix hub cache; banners/icons)
+Per-product tabs are stored in `kitgenix_custom_tabs_for_woocommerce_tabs`. Settings/global tabs use `kitgenix_custom_tabs_for_woocommerce_settings`; templates use `kitgenix_custom_tabs_for_woocommerce_templates`; the activity log uses `kitgenix_custom_tabs_for_woocommerce_event_log`.
 
-Nonces (exact identifiers):
-- Product save nonce field: `kitgenix_custom_tabs_for_woocommerce_tabs_nonce`
-- Product save nonce action: `kitgenix_custom_tabs_for_woocommerce_tabs_save`
-- Settings form nonce field/action: `kitgenix_custom_tabs_for_woocommerce_settings_nonce` / `kitgenix_custom_tabs_for_woocommerce_settings_save`
-- Templates form nonce/group: uses the dedicated `kitgenix_custom_tabs_for_woocommerce_templates_group` Settings API group (own `register_setting()` call, own sanitize callback) now that templates are a separate option
-- Portability (import/export) nonce action: `kitgenix_custom_tabs_for_woocommerce_portability` (field name `_wpnonce`)
-- Event log clear nonce action: `kitgenix_custom_tabs_for_woocommerce_clear_event_log`
-
-Admin-post actions (Portability tab):
-- `kitgenix_custom_tabs_for_woocommerce_export` – full JSON export (settings + global tabs + templates)
-- `kitgenix_custom_tabs_for_woocommerce_import` – full JSON import (Replace/Merge, with a client-side preview before submit)
-- `kitgenix_custom_tabs_for_woocommerce_export_csv` – flattened CSV export of Global Tabs or Templates (`?which=global_tabs|templates`)
-- `kitgenix_custom_tabs_for_woocommerce_import_csv` – CSV import into Global Tabs or Templates (Replace/Merge). CSV has no `visibility`/`target` columns; those are only round-tripped via the JSON format.
-
-Shortcode:
-- `[kitgenix_tab slug="warranty-info"]` or `[kitgenix_tab title="Warranty Info"]` – renders a saved template's content anywhere shortcodes are processed (post/page content, widgets, other tabs), not only inside the WooCommerce product tabs area. Optional `heading="1"` attribute prints the template's title as a heading above the content. Templates only – a live per-product or global tab is meaningless outside its product-page context.
-
-Bulk action (Products list):
-- Selecting one or more products on Products → All Products and choosing "Add Kitgenix tab: {template name}" from the Bulk actions dropdown appends that template as a product-specific tab to every selected product (skipping any product already at the max-tabs cap). Uses WordPress core's own `bulk_actions-edit-product` / `handle_bulk_actions-edit-product` hooks.
-
-Hooks used (consuming other systems):
-- `plugins_loaded` (action): bootstrap plugin when WooCommerce is available
-- `admin_init` (action): register settings; perform activation redirect once
-- `admin_menu` (action): ensure shared Kitgenix hub menu; register plugin submenu page
-- `admin_enqueue_scripts` (action): enqueue hub/admin/product editor assets
-- `plugin_action_links_{plugin_basename}` (filter): add "Settings" link on Plugins screen
-- `before_woocommerce_init` (action): declare WooCommerce HPOS compatibility
-- `woocommerce_product_tabs` (filter): inject frontend tabs
-- `woocommerce_product_data_tabs` (filter): add Product data tab
-- `woocommerce_product_data_panels` (action): render Product data panel
-- `woocommerce_process_product_meta` (action): save product tab meta
-- `bulk_actions-edit-product` / `handle_bulk_actions-edit-product` (filters): the Products list bulk action above
-- `init` (action): register the `[kitgenix_tab]` shortcode
-
-Developer hooks (provided by this plugin):
-- `kitgenix_custom_tabs_for_woocommerce_tab_eligible` (filter: `bool $eligible, array $row, WC_Product $product`) – runs after the built-in enabled/target/visibility checks already passed; return `false` to suppress a specific resolved tab for a specific product/visitor.
-- `kitgenix_custom_tabs_for_woocommerce_tab_priority` (filter: `int $priority, array $row, WC_Product $product`) – adjust a tab's final ordering priority.
-- `kitgenix_custom_tabs_for_woocommerce_tab_content` (filter: `string $content, array $row, WC_Product $product`) – adjust a tab's content before shortcode processing/`wpautop()`.
-- `kitgenix_custom_tabs_for_woocommerce_shortcode_html` (filter: `string $html, array $template`) – adjust the final `[kitgenix_tab]` shortcode output.
-
-Matching engine:
-- `KitgenixCustomTabsForWooCommerce\Core\Tab_Matcher::is_eligible( array $row, WC_Product $product )` is the single entry point both the frontend renderer and any custom integration should use to decide whether a saved row applies – it combines `matches_target()` (global-tab product/category/tag/type rules) and `is_visible()` (enabled flag + visitor/stock/purchasable conditions). No additional database queries are issued per match: it reads only from the already-loaded `$product` object and cached taxonomy lookups (`has_term()`).
-
-== Security & Privacy ==
-
-- Admin actions are protected with capability checks (`edit_products` for product tabs, `manage_woocommerce`/`manage_options` for settings, portability, and bulk actions).
-- Product tab saving, settings saves, the event log clear action, and JSON/CSV import/export are all nonce-protected.
-- Settings and templates are saved via WordPress' Settings API (options.php), which is nonce-protected by WordPress core.
-- Tab content is output with WordPress formatting and safe HTML handling (`wp_kses_post()`), so rich content is preserved rather than stripped down to plain text.
-- Visibility conditions read only standard WordPress data already available to the current request (login state, the current user's own role list, product stock/purchasable status) – nothing external is contacted and no additional personal data is stored or transmitted.
-- Settings export excludes nothing sensitive by default since this plugin stores no API keys, tokens, or credentials – only tab content, structure, and configuration.
-
-== Uninstall ==
-
-On uninstall, the plugin removes, for every site on a multisite network:
-- The settings option and the separate templates option
-- The activity log option
-- All saved product tab meta entries
-- The cached usage-stats transient and the activation-redirect transient
-
-Note: the Kitgenix Hub's shared WordPress.org cache transients (active-install counts, ratings, media) are intentionally left in place, since other installed Kitgenix plugins may still be using them; they expire on their own after about a day.
+When the plugin is uninstalled through WordPress, its settings, templates, event log, related transients, and product-tab meta are removed. Multisite uninstall performs the cleanup for each site in the network.
 
 == Frequently Asked Questions ==
 
 = Does this plugin require WooCommerce? =
-Yes. Kitgenix Custom Tabs for WooCommerce requires WooCommerce to be installed and active – tabs are added and managed through the WooCommerce product editor and rendered on the WooCommerce product page. The plugin deactivates itself with a notice if WooCommerce isn't active.
+Yes. WooCommerce is a required dependency, and activation is prevented if WooCommerce is inactive.
 
-= How do I add a custom tab to a WooCommerce product? =
-Edit a product and open Product data → Custom Tabs. Click "Add new tab" and fill in the title, content, and any optional fields in the modal editor.
+= How do I add a custom WooCommerce product tab? =
+Edit a product, open Product data → Custom Tabs, add the tab title and content, configure any visibility or priority options, and update the product.
 
-= Does it support variable products? =
-Yes. Global tab targeting can include or exclude by product type – simple, variable, grouped, and external – and product-specific tabs work on any product type the same way.
+= Can I add one tab to every product? =
+Yes. Create a Global Tab and leave its targeting rules empty. You can also narrow a global tab to selected products, categories, tags, or product types.
 
-= Can I add store-wide tabs to every product? =
-Yes. Use Kitgenix → Custom Tabs → Global Tabs to create a tab that applies to every product by default, or restrict it to specific products, categories, tags, or product types using Include/Exclude rules.
+= Can tabs be shown only to certain customers? =
+Yes. Visibility can depend on logged-in/logged-out status, WordPress user roles, stock status, and product purchasability.
 
-= Can I target a global tab to only some products? =
-Yes. Open a global tab's editor and use the "Product targeting" section. Leaving a dimension empty means "no restriction" for that dimension. Exclude rules always win over Include rules. Leave every dimension empty and the tab applies to every product.
+= Can I reuse the same content on many products? =
+Yes. Save it as a Template, insert it into tabs, apply it to selected products using WooCommerce bulk actions, or display the saved template with `[kitgenix_tab]`.
 
-= Can I show or hide a tab based on who's viewing it? =
-Yes. Any product tab or global tab can be restricted by visitor login state (logged-in/logged-out), user role, stock status, and/or purchasability, using the "Visibility conditions" section in the tab editor.
+= Does it support rich text and shortcodes? =
+Yes. The admin editor uses a locally bundled Quill editor. WordPress shortcodes in tab content can be processed when Allow Shortcodes is enabled.
 
-= Can I control the order of tabs? =
-Yes. Each tab has a priority; lower numbers appear earlier. Table rows also have keyboard-accessible Move up/down controls that swap the actual stored priority values between neighbouring tabs, so the order shown in the admin always matches what renders on the product page.
+= Can I export tabs to another store? =
+Yes. JSON preserves settings, global tabs, templates, targeting, and visibility rules. CSV is available for the basic Global Tabs or Templates fields.
 
-= Can I save a tab as a reusable template? =
-Yes. The Templates screen lets you save reusable tab snippets, and both the product editor and the Global Tabs screen can insert a saved template directly into a new tab.
-
-= Can I apply a template to many products at once? =
-Yes. Select products on the WooCommerce Products list and choose "Add Kitgenix tab: {template name}" from the Bulk actions dropdown.
-
-= Can I duplicate an existing tab? =
-Yes. Product-specific tabs and global tabs include a Duplicate action so you can clone an existing row and only change the parts that differ.
-
-= Can I temporarily turn a tab off without deleting it? =
-Yes. Every tab row – product-specific, global, and template – has an Enable/Disable action.
-
-= Do tabs support rich content? =
-Yes. The tab editor is a modal powered by a locally-bundled Quill rich-text editor, so you get proper formatting without loading anything from an external CDN.
-
-= Do tabs support shortcodes? =
-Yes, if "Allow shortcodes in tab content" is enabled in Settings. When enabled, shortcodes inside tab content are processed on the frontend.
-
-= Can I show a template's content outside the product tabs area? =
-Yes, with the `[kitgenix_tab]` shortcode – for example `[kitgenix_tab slug="warranty-info"]` – anywhere shortcodes are processed (post/page content, widgets, other tabs).
-
-= Can I hide the heading inside the tab content? =
-Yes. There's a setting to keep the title on the tab label only and hide the repeated heading inside the tab panel, plus a per-tab override.
-
-= Can I export or import my tabs and settings? =
-Yes, from the Portability tab. JSON export/import carries everything, including visibility conditions and targeting rules, and shows a preview of an uploaded file before you commit to Replace or Merge. CSV export/import is available separately for Global Tabs and Templates, covering the basic fields (title, nickname, slug, priority, enabled, content) – visibility/targeting rules aren't part of CSV.
-
-= Does it support WooCommerce's High-Performance Order Storage (HPOS)? =
-Yes. The plugin declares compatibility with WooCommerce's custom order tables feature. It doesn't read or write order data at all.
-
-= Does this work with WooCommerce's block-based product editor? =
-The plugin's Custom Tabs panel is built on WooCommerce's classic (meta-box) Product Data screen, which is the supported product-editing interface following WooCommerce 11.0's removal of the experimental block-based Product Editor Beta.
-
-= Will adding lots of tabs slow down my store? =
-Templates are stored in their own non-autoloaded option so a large template library doesn't add weight to ordinary page loads. Global tab matching runs against the already-loaded product object with no extra database queries per tab, and a configurable maximum-tabs-per-product setting keeps the product editor and the frontend tab list from growing unbounded.
-
-= Does the rich-text editor load anything from outside my site? =
-No. The Quill editor is bundled with the plugin and served from your own site, not a CDN.
-
-= Does this plugin phone home or send any data externally? =
-Only when you view the Kitgenix admin hub screen, where it looks up active-install counts, ratings, and artwork for Kitgenix plugins from the WordPress.org Plugins API (cached for a day). No customer, order, or product data is ever sent. See "External Services" above for details.
-
-= What happens to my tabs if I deactivate or uninstall the plugin? =
-Deactivating the plugin keeps all of your data in place; tabs simply stop rendering until you reactivate. Uninstalling (deleting the plugin from the Plugins screen) permanently removes the plugin's settings, templates, activity log, and all saved product tab meta – see "Uninstall" above.
+= Is it HPOS compatible? =
+Yes. The plugin declares compatibility with WooCommerce custom order tables and does not depend on WooCommerce order storage for its product tabs.
 
 == Screenshots ==
 
-1. The Custom Tabs panel inside the WooCommerce product editor, listing a product's tabs with position, slug, and reorder/enable/duplicate actions.
-2. The tab editor modal, showing the Quill rich-text content editor alongside the title, slug, position, and Visibility conditions fields.
-3. The Global Tabs screen, with a store-wide tab's Product targeting rules set to include specific categories and exclude specific products.
-4. The Templates screen, listing saved reusable tab snippets such as a sizing guide and a warranty notice ready to insert into any product.
-5. The Portability tab, with JSON export/import and CSV export/import options for settings, Global Tabs, and Templates.
-6. The WooCommerce Products list Bulk actions dropdown, applying a saved Kitgenix tab template to several selected products at once.
-7. A custom tab rendered on the live WooCommerce product page, alongside the built-in Description and Reviews tabs.
-8. The Kitgenix admin interface with the light/dark theme toggle switched to dark mode.
+1. Product Data → Custom Tabs for product-specific tab management.
+2. Rich tab editor with title, content, slug, priority, heading, and visibility controls.
+3. Global Tabs with Include/Exclude targeting rules.
+4. Reusable Templates for common WooCommerce product information.
+5. Portability tools for JSON and CSV import/export.
+6. WooCommerce Products bulk actions for applying saved templates.
+7. A custom tab displayed in WooCommerce's frontend product-tab area.
+8. Kitgenix admin interface and activity log.
 
-== Credits ==
-Built with ❤︎ by @kitgenix - https://kitgenix.com
+== Bundled Library & Source Code ==
 
-Includes Quill (https://quilljs.com/), Copyright (c) 2014 Jason Chen, Copyright (c) 2013 salesforce.com, used under the BSD-3-Clause license. Bundled locally in `assets/vendor/quill/`; unmodified from upstream.
+The plugin bundles **Quill Editor 1.3.7** locally for rich-text editing in wp-admin (`assets/vendor/quill/quill.min.js` and `quill.snow.css`). It is not loaded from a third-party JavaScript CDN.
+
+Quill 1.3.7 source code: https://github.com/slab/quill/tree/1.3.7
+Quill project: https://quilljs.com/
+License: BSD-3-Clause
+Copyright (c) 2014 Jason Chen; Copyright (c) 2013 salesforce.com.
+
+== Support ==
+
+Plugin information and documentation:
+https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/
+
+For WordPress.org installations, support is also available through the plugin's WordPress.org support forum.
 
 == Support Development ==
 
-If this plugin saves you time, please consider making a donation to support its continued development and maintenance:
+Kitgenix Custom Tabs for WooCommerce is free software. If it helps your store, you can support continued development with a voluntary donation:
 https://www.paypal.com/donate/?hosted_button_id=KALF36K6JJ9B2
 
 == Upgrade Notice ==
 
 = 2.0.0 =
-Adds conditional global tabs, per-tab visibility conditions, JSON/CSV import-export, a bulk "apply template" action, and a shortcode. Existing tabs, templates, and settings migrate automatically. The rich-text editor no longer loads from an external CDN.
+Adds conditional global tabs, visibility rules, reusable-template improvements, JSON/CSV portability, bulk template application, shortcode output, and the redesigned Kitgenix admin interface.
 
 == Changelog ==
 
-= 2.0.0 (25 August 2026) =
+= 2.0.0 (31 August 2026) =
 
 * New: Added Conditional Global Tabs, allowing a global tab to target all products or be restricted by specific products, categories, tags, and/or product types, each with independent Include/Exclude rules. Exclude rules always take precedence, and matching uses the already-loaded product without additional database queries per tab.
 * New: Added Tab Visibility Conditions so product-specific and global tabs can be restricted by visitor login state, user role, stock status, and/or purchasability using four independent conditions without introducing a complex rules engine.
