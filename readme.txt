@@ -5,9 +5,10 @@ Tags: woocommerce, product tabs, custom product tabs, global tabs, product conte
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
+PluginScore Verification: pluginscore-verify-3172c6764006050edf23b889ba0fa123
 
 Create WooCommerce product tabs with per-product content, global targeting, visibility rules, templates and bulk tools.
 
@@ -219,10 +220,16 @@ https://www.paypal.com/donate/?hosted_button_id=KALF36K6JJ9B2
 
 == Upgrade Notice ==
 
-= 2.0.0 =
-Adds conditional global tabs, visibility rules, reusable-template improvements, JSON/CSV portability, bulk template application, shortcode output, and the redesigned Kitgenix admin interface.
+= 2.1.0 =
+Version 2.1.0 is recommended for all sites.
 
 == Changelog ==
+
+= 2.1.0 (13 October 2026) =
+
+* New: Added a configurable log auto-delete setting (7/14/30 days) to automatically remove old event log entries.
+* New: Added a "Request a Feature" button to the Need Help? sidebar, linking directly to this plugin's page on the Kitgenix roadmap (https://roadmap.kitgenix.com).
+* New: Added a "Request a Feature" banner below the plugin grid on the Kitgenix Hub page, linking to the shared Kitgenix roadmap.
 
 = 2.0.0 (31 August 2026) =
 

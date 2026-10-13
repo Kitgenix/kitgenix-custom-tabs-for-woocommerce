@@ -13,6 +13,7 @@ use KitgenixCustomTabsForWooCommerce\Admin\Bulk_Tools;
 use KitgenixCustomTabsForWooCommerce\Admin\Portability;
 use KitgenixCustomTabsForWooCommerce\Admin\Product_Tabs;
 use KitgenixCustomTabsForWooCommerce\Admin\Settings_UI;
+use KitgenixCustomTabsForWooCommerce\Core\Event_Log;
 use KitgenixCustomTabsForWooCommerce\Core\Settings;
 use KitgenixCustomTabsForWooCommerce\Frontend\Shortcode;
 use KitgenixCustomTabsForWooCommerce\Frontend\Tabs;
@@ -24,6 +25,10 @@ final class Plugin {
 
 		// Register settings.
 		\add_action( 'admin_init', [ Settings::class, 'register_settings' ] );
+
+		// Daily housekeeping: prune event log entries past their retention period.
+		\add_action( 'admin_init', [ Event_Log::class, 'maybe_schedule_pruning' ] );
+		\add_action( Event_Log::get_cron_hook(), [ Event_Log::class, 'prune' ] );
 
 		// Translations are loaded by WordPress.org for plugins hosted on wp.org;
 		// explicit load_plugin_textdomain() is no longer required and is discouraged.

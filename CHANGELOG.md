@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0 – 13 October 2026
+
+- **New:** Added a configurable log auto-delete setting (7/14/30 days) to automatically remove old event log entries.
+- **New:** Added a "Request a Feature" button to the Need Help? sidebar, linking directly to this plugin's page on the Kitgenix roadmap (https://roadmap.kitgenix.com).
+- **New:** Added a "Request a Feature" banner below the plugin grid on the Kitgenix Hub page, linking to the shared Kitgenix roadmap.
+
 ## 2.0.0 – 22 August 2026
 
 - **New:** Added Conditional Global Tabs, allowing a global tab to target all products or be restricted by specific products, categories, tags, and/or product types, each with independent Include/Exclude rules. Exclude rules always take precedence, and matching uses the already-loaded product without additional database queries per tab.

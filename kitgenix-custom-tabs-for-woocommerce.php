@@ -8,7 +8,7 @@
  * Author Support URI: https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/support
  * Feature Request URI: https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/feature-request
  * Description:       Add custom WooCommerce product tabs with per-product content, global tabs, and lightweight controls.
- * Version:           2.0.0
+ * Version:           2.1.0
  * Requires at least: 6.0
  * Tested up to:      7.1
  * Requires PHP:      8.1
@@ -51,7 +51,7 @@ defined( 'ABSPATH' ) || exit;
 use KitgenixCustomTabsForWooCommerce\Plugin;
 
 if ( ! defined( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_VERSION' ) ) {
-	define( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_VERSION', '2.0.0' );
+	define( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_VERSION', '2.1.0' );
 }
 if ( ! defined( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_FILE' ) ) {
 	define( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_FILE', __FILE__ );
@@ -492,6 +492,14 @@ if ( ! function_exists( 'kitgenix_render_admin_page' ) ) {
 				'page'     => 'kitgenix-affiliate-link-manager',
 				'requires' => __( 'Manage affiliate short links, branded redirects, and click tracking from one WordPress dashboard.', 'kitgenix-custom-tabs-for-woocommerce' ),
 			],
+			[
+				'id'       => 'database_cleaner',
+				'name'     => __( 'Database Cleaner', 'kitgenix-custom-tabs-for-woocommerce' ),
+				'slug'     => 'kitgenix-database-cleaner',
+				'file'     => 'kitgenix-database-cleaner/kitgenix-database-cleaner.php',
+				'page'     => 'kitgenix-database-cleaner',
+				'requires' => __( 'Scan and clean your WordPress database safely, with plugin/theme attribution for every item found and a built-in recycle bin so nothing is ever deleted without a way back.', 'kitgenix-custom-tabs-for-woocommerce' ),
+			],
 		];
 
 		$slugs = [];
@@ -639,7 +647,17 @@ if ( ! function_exists( 'kitgenix_render_admin_page' ) ) {
 				. '</div>';
 		}
 
-		echo '</div></div></div></div>';
+		echo '</div>'; // .kitgenix-hub-grid
+
+		echo '<div class="kitgenix-hub-feature-banner">'
+			. '<div class="kitgenix-hub-feature-banner-copy">'
+			. '<h2>' . esc_html__( 'Have an idea for a new feature?', 'kitgenix-custom-tabs-for-woocommerce' ) . '</h2>'
+			. '<p>' . esc_html__( 'Browse the roadmap, vote on ideas, and submit feature requests for any Kitgenix plugin.', 'kitgenix-custom-tabs-for-woocommerce' ) . '</p>'
+			. '</div>'
+			. '<a class="button button-primary" href="' . esc_url( 'https://roadmap.kitgenix.com' ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Request a Feature', 'kitgenix-custom-tabs-for-woocommerce' ) . '</a>'
+			. '</div>';
+
+		echo '</div></div></div>'; // .kitgenix-hub, .kitgenix-hub-wrap, .wrap
 	}
 }
 
@@ -686,6 +704,7 @@ register_deactivation_hook(
 	__FILE__,
 	static function (): void {
 		delete_transient( 'kitgenix_custom_tabs_for_woocommerce_do_activation_redirect' );
+		wp_clear_scheduled_hook( 'kitgenix_custom_tabs_for_woocommerce_prune_event_log' );
 	}
 );
 

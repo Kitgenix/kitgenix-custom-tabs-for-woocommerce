@@ -18,6 +18,7 @@ final class Settings_UI {
 		add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_assets' ], 20 );
 		add_action( 'admin_notices', [ self::class, 'render_admin_notices' ] );
 		add_action( 'admin_post_kitgenix_custom_tabs_for_woocommerce_clear_event_log', [ self::class, 'handle_clear_event_log' ] );
+		add_action( 'admin_post_kitgenix_custom_tabs_for_woocommerce_save_log_retention', [ self::class, 'handle_save_log_retention' ] );
 		add_action( 'update_option_' . Settings::OPTION_NAME, [ self::class, 'on_settings_saved' ], 10, 3 );
 	}
 
@@ -275,6 +276,7 @@ final class Settings_UI {
 			. '<div class="kitgenix-button-group kitgenix-button-group-stack">'
 			. '<a class="button button-secondary" href="' . esc_url( 'https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/documentation/' ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'kitgenix-custom-tabs-for-woocommerce' ) . '</a>'
 			. '<a class="button button-primary" href="' . esc_url( 'https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/support' ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Request Support', 'kitgenix-custom-tabs-for-woocommerce' ) . '</a>'
+			. '<a class="button button-secondary" href="' . esc_url( 'https://roadmap.kitgenix.com/?product=custom-tabs-for-woocommerce' ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Request a Feature', 'kitgenix-custom-tabs-for-woocommerce' ) . '</a>'
 			. '</div>'
 			. '</div>'
 			. '</div>';
@@ -1065,12 +1067,22 @@ final class Settings_UI {
 				. '</div>';
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['kitgenix_log_retention_saved'] ) ) {
+			echo '<div class="kitgenix-notice kitgenix-notice-success" role="status">'
+				. '<span class="kitgenix-notice-icon" aria-hidden="true">' . self::icon( 'inbox' ) . '</span>'  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- pre-escaped, static trusted SVG markup from self::icon().
+				. '<div class="kitgenix-notice-body"><p class="kitgenix-notice-text">' . esc_html__( 'Log retention setting saved.', 'kitgenix-custom-tabs-for-woocommerce' ) . '</p></div>'
+				. '<button type="button" class="kitgenix-notice-close" aria-label="' . esc_attr__( 'Dismiss', 'kitgenix-custom-tabs-for-woocommerce' ) . '">&times;</button>'
+				. '</div>';
+		}
+
 		$clear_url = wp_nonce_url(
 			admin_url( 'admin-post.php?action=kitgenix_custom_tabs_for_woocommerce_clear_event_log' ),
 			'kitgenix_custom_tabs_for_woocommerce_clear_event_log'
 		);
 
-		$log_entries = Event_Log::get_raw_log();
+		$log_entries     = Event_Log::get_raw_log();
+		$retention_days  = Event_Log::get_retention_days();
 
 		echo '<div class="kitgenix-card">';
 
@@ -1080,6 +1092,17 @@ final class Settings_UI {
 			. '<p class="description">' . esc_html__( 'A record of recent plugin events. Entries show the timestamp, context, outcome, and a plain-English note. IP addresses and sensitive data are never stored here.', 'kitgenix-custom-tabs-for-woocommerce' ) . '</p>'
 			. '</div>'
 			. '<div class="kitgenix-card-head-actions">'
+			. '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="display:inline-flex;align-items:center;gap:6px;">'
+			. '<input type="hidden" name="action" value="kitgenix_custom_tabs_for_woocommerce_save_log_retention" />'
+			. wp_nonce_field( 'kitgenix_custom_tabs_for_woocommerce_save_log_retention', '_wpnonce', true, false )
+			. '<label for="kitgenix_custom_tabs_for_woocommerce_log_retention_days" title="' . esc_attr__( 'Log entries older than the selected period are removed automatically.', 'kitgenix-custom-tabs-for-woocommerce' ) . '">' . esc_html__( 'Auto-delete logs after', 'kitgenix-custom-tabs-for-woocommerce' ) . '</label>'
+			. '<select id="kitgenix_custom_tabs_for_woocommerce_log_retention_days" name="kitgenix_custom_tabs_for_woocommerce_log_retention_days">'
+			. '<option value="7" ' . selected( 7, $retention_days, false ) . '>' . esc_html__( '7 days', 'kitgenix-custom-tabs-for-woocommerce' ) . '</option>'
+			. '<option value="14" ' . selected( 14, $retention_days, false ) . '>' . esc_html__( '14 days', 'kitgenix-custom-tabs-for-woocommerce' ) . '</option>'
+			. '<option value="30" ' . selected( 30, $retention_days, false ) . '>' . esc_html__( '30 days', 'kitgenix-custom-tabs-for-woocommerce' ) . '</option>'
+			. '</select>'
+			. '<button type="submit" class="button button-secondary">' . esc_html__( 'Save', 'kitgenix-custom-tabs-for-woocommerce' ) . '</button>'
+			. '</form>'
 			. '<a href="' . esc_url( $clear_url ) . '" class="button button-secondary" onclick="return confirm(\'' . esc_js( __( 'Clear all log entries?', 'kitgenix-custom-tabs-for-woocommerce' ) ) . '\')">' . esc_html__( 'Clear log', 'kitgenix-custom-tabs-for-woocommerce' ) . '</a>'
 			. '</div>'
 			. '</div>';
@@ -1209,6 +1232,23 @@ final class Settings_UI {
 		check_admin_referer( 'kitgenix_custom_tabs_for_woocommerce_clear_event_log' );
 		Event_Log::clear();
 		wp_safe_redirect( admin_url( 'admin.php?page=kitgenix-custom-tabs-for-woocommerce&tab=log&kitgenix_log_cleared=1' ) );
+		exit;
+	}
+
+	public static function handle_save_log_retention(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Permission denied.', 'kitgenix-custom-tabs-for-woocommerce' ), 403 );
+		}
+		check_admin_referer( 'kitgenix_custom_tabs_for_woocommerce_save_log_retention' );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above via check_admin_referer().
+		$days = isset( $_POST['kitgenix_custom_tabs_for_woocommerce_log_retention_days'] ) ? absint( wp_unslash( $_POST['kitgenix_custom_tabs_for_woocommerce_log_retention_days'] ) ) : 30;
+		if ( ! in_array( $days, [ 7, 14, 30 ], true ) ) {
+			$days = 30;
+		}
+
+		Event_Log::set_retention_days( $days );
+		wp_safe_redirect( admin_url( 'admin.php?page=kitgenix-custom-tabs-for-woocommerce&tab=log&kitgenix_log_retention_saved=1' ) );
 		exit;
 	}
 

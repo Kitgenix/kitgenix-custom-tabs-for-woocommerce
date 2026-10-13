@@ -14,8 +14,12 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Event_Log {
 
-    private const OPTION_KEY  = 'kitgenix_custom_tabs_for_woocommerce_event_log';
-    private const MAX_ENTRIES = 100;
+    private const OPTION_KEY           = 'kitgenix_custom_tabs_for_woocommerce_event_log';
+    private const MAX_ENTRIES          = 100;
+    private const RETENTION_OPTION_KEY = 'kitgenix_custom_tabs_for_woocommerce_log_retention_days';
+    private const DEFAULT_RETENTION    = 30;
+    private const ALLOWED_RETENTION    = [ 7, 14, 30 ];
+    private const CRON_HOOK            = 'kitgenix_custom_tabs_for_woocommerce_prune_event_log';
 
     /**
      * Record an event to the log.
@@ -34,6 +38,8 @@ final class Event_Log {
             'note'    => sanitize_text_field( $note ),
             'code'    => sanitize_key( $code ),
         ];
+
+        $log = self::prune_by_age( $log );
 
         if ( count( $log ) > self::MAX_ENTRIES ) {
             $log = array_slice( $log, -self::MAX_ENTRIES );
@@ -55,6 +61,72 @@ final class Event_Log {
     /** Delete all stored entries. */
     public static function clear(): void {
         delete_option( self::OPTION_KEY );
+    }
+
+    /**
+     * Remove entries older than the configured retention period.
+     *
+     * @param array<int,array<string,mixed>> $log
+     * @return array<int,array<string,mixed>>
+     */
+    private static function prune_by_age( array $log ): array {
+        $cutoff = time() - ( self::get_retention_days() * DAY_IN_SECONDS );
+
+        return array_values(
+            array_filter(
+                $log,
+                static function ( array $entry ) use ( $cutoff ): bool {
+                    return ! isset( $entry['time'] ) || (int) $entry['time'] >= $cutoff;
+                }
+            )
+        );
+    }
+
+    /**
+     * Prune log entries older than the configured retention period. Shared by
+     * the on-write path (record()) and the daily WP-Cron housekeeping hook so
+     * logs decay even on a quiet site with no new events.
+     */
+    public static function prune(): void {
+        $log    = self::get_raw_log();
+        $pruned = self::prune_by_age( $log );
+
+        if ( count( $pruned ) !== count( $log ) ) {
+            update_option( self::OPTION_KEY, $pruned, false );
+        }
+    }
+
+    /**
+     * Return the configured log retention period in days (7, 14, or 30).
+     */
+    public static function get_retention_days(): int {
+        $days = (int) get_option( self::RETENTION_OPTION_KEY, self::DEFAULT_RETENTION );
+        return in_array( $days, self::ALLOWED_RETENTION, true ) ? $days : self::DEFAULT_RETENTION;
+    }
+
+    /**
+     * Save the log retention period in days, clamped to an allowed value.
+     */
+    public static function set_retention_days( int $days ): void {
+        if ( ! in_array( $days, self::ALLOWED_RETENTION, true ) ) {
+            $days = self::DEFAULT_RETENTION;
+        }
+
+        update_option( self::RETENTION_OPTION_KEY, $days );
+    }
+
+    /**
+     * The WP-Cron hook name used for daily log pruning.
+     */
+    public static function get_cron_hook(): string {
+        return self::CRON_HOOK;
+    }
+
+    /** Ensure the daily pruning cron event is scheduled. */
+    public static function maybe_schedule_pruning(): void {
+        if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
+            wp_schedule_event( time(), 'daily', self::CRON_HOOK );
+        }
     }
 
     /**
