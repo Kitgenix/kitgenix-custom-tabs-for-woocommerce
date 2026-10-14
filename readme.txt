@@ -5,10 +5,10 @@ Tags: woocommerce, product tabs, custom product tabs, global tabs, product conte
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.1.0
+Stable tag: 2.1.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-PluginScore Verification: pluginscore-verify-3172c6764006050edf23b889ba0fa123
+PluginScore Verification: pluginscore-verify-c9af7597618f55ab807b892d2e97386d
 
 Create WooCommerce product tabs with per-product content, global targeting, visibility rules, templates and bulk tools.
 
@@ -220,10 +220,18 @@ https://www.paypal.com/donate/?hosted_button_id=KALF36K6JJ9B2
 
 == Upgrade Notice ==
 
-= 2.1.0 =
-Version 2.1.0 is recommended for all sites.
+= 2.1.2 =
+Version 2.1.2 is recommended for all sites.
 
 == Changelog ==
+
+= 2.1.2 (13 October 2026) =
+
+* Fix: Bump version to 2.1.2 across the plugin.
+
+= 2.1.1 (13 October 2026) =
+
+* Fix: Updated PluginScore Verification code.
 
 = 2.1.0 (13 October 2026) =
 
