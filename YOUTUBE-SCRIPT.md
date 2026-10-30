@@ -8,7 +8,7 @@
 
 **Estimated runtime:** 10–11 minutes (approx. 1,900 spoken words at a typical tutorial pace of ~175–180 wpm; allow extra time for screen-demo pauses in sections 5, 6 and 10)
 
-**Plugin version covered:** 2.1.0 (requires WordPress 6.0+, PHP 8.1+, WooCommerce 10.0+)
+**Plugin version covered:** 2.2.0 (requires WordPress 6.0+, PHP 8.2+, WooCommerce 10.0+)
 
 **Recording notes:**
 - Record the product-editor sections in WooCommerce's classic Product Data editor (that is the editor the Custom Tabs panel lives in).

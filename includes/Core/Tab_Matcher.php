@@ -28,7 +28,12 @@ final class Tab_Matcher {
 		// phpcs:disable WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- plugin's own target-rule shape, never passed to get_posts()/WP_Query.
 		return [
 			'products'   => [ 'include' => [], 'exclude' => [] ],
-			'categories' => [ 'include' => [], 'exclude' => [] ],
+			// `include_children` defaults to false here so that a global tab's
+			// `target` array saved before this flag existed (which always has a
+			// `categories` key, just never this one) keeps matching exactly the
+			// same products it always did when it's read back without being
+			// resaved through sanitize_target() – see matches_target().
+			'categories' => [ 'include' => [], 'exclude' => [], 'include_children' => false ],
 			'tags'       => [ 'include' => [], 'exclude' => [] ],
 			'types'      => [ 'include' => [], 'exclude' => [] ],
 		];
@@ -79,6 +84,10 @@ final class Tab_Matcher {
 					: [];
 				$out[ $dimension ][ $side ] = array_values( array_unique( array_filter( array_map( 'absint', $ids ) ) ) );
 			}
+		}
+
+		if ( isset( $raw['categories']['include_children'] ) ) {
+			$out['categories']['include_children'] = ! empty( $raw['categories']['include_children'] );
 		}
 
 		if ( isset( $raw['types'] ) && is_array( $raw['types'] ) ) {
@@ -136,13 +145,29 @@ final class Tab_Matcher {
 		}
 
 		$target     = array_merge( self::default_target(), $row['target'] );
+		// The top-level array_merge() above replaces 'categories' wholesale
+		// whenever the saved row already has that key – true for every global
+		// tab saved since targeting existed – so it alone would silently drop
+		// a default like `include_children` for a row saved before that flag
+		// existed. Merge the categories sub-array's own keys explicitly instead.
+		$target['categories'] = array_merge(
+			[ 'include' => [], 'exclude' => [], 'include_children' => false ],
+			is_array( $row['target']['categories'] ?? null ) ? $row['target']['categories'] : []
+		);
 		$product_id = (int) $product->get_id();
+
+		$category_exclude = $target['categories']['exclude'];
+		$category_include = $target['categories']['include'];
+		if ( ! empty( $target['categories']['include_children'] ) ) {
+			$category_exclude = self::expand_with_children( $category_exclude, 'product_cat' );
+			$category_include = self::expand_with_children( $category_include, 'product_cat' );
+		}
 
 		// Exclusions always win, checked first and independently of include rules.
 		if ( self::in_list( $product_id, $target['products']['exclude'] ) ) {
 			return false;
 		}
-		if ( self::has_any_term( $product_id, 'product_cat', $target['categories']['exclude'] ) ) {
+		if ( self::has_any_term( $product_id, 'product_cat', $category_exclude ) ) {
 			return false;
 		}
 		if ( self::has_any_term( $product_id, 'product_tag', $target['tags']['exclude'] ) ) {
@@ -158,7 +183,7 @@ final class Tab_Matcher {
 		if ( ! empty( $target['products']['include'] ) && ! self::in_list( $product_id, $target['products']['include'] ) ) {
 			return false;
 		}
-		if ( ! empty( $target['categories']['include'] ) && ! self::has_any_term( $product_id, 'product_cat', $target['categories']['include'] ) ) {
+		if ( ! empty( $category_include ) && ! self::has_any_term( $product_id, 'product_cat', $category_include ) ) {
 			return false;
 		}
 		if ( ! empty( $target['tags']['include'] ) && ! self::has_any_term( $product_id, 'product_tag', $target['tags']['include'] ) ) {
@@ -169,6 +194,46 @@ final class Tab_Matcher {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Expand a list of term IDs to include every descendant term, for the
+	 * "Include sub-categories" target option. Cached in the object cache
+	 * (5 minutes – cheap to recompute, and category trees rarely change
+	 * minute to minute) since this would otherwise run on every product page
+	 * load for every global tab that targets categories with this flag on.
+	 *
+	 * @param array<int,int> $term_ids
+	 * @return array<int,int>
+	 */
+	private static function expand_with_children( array $term_ids, string $taxonomy ): array {
+		if ( empty( $term_ids ) ) {
+			return $term_ids;
+		}
+
+		$cache_key_ids = $term_ids;
+		sort( $cache_key_ids );
+		$cache_key = 'kctw_term_children_' . $taxonomy . '_' . md5( implode( ',', $cache_key_ids ) );
+
+		$cached = wp_cache_get( $cache_key, 'kitgenix_custom_tabs_for_woocommerce' );
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$expanded = $term_ids;
+		foreach ( $term_ids as $term_id ) {
+			$children = get_term_children( $term_id, $taxonomy );
+			if ( is_array( $children ) ) {
+				foreach ( $children as $child_id ) {
+					$expanded[] = (int) $child_id;
+				}
+			}
+		}
+		$expanded = array_values( array_unique( array_map( 'absint', $expanded ) ) );
+
+		wp_cache_set( $cache_key, $expanded, 'kitgenix_custom_tabs_for_woocommerce', 5 * MINUTE_IN_SECONDS );
+
+		return $expanded;
 	}
 
 	/**

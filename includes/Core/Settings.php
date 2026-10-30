@@ -18,6 +18,16 @@ final class Settings {
 	 */
 	public const TEMPLATES_OPTION_NAME = 'kitgenix_custom_tabs_for_woocommerce_templates';
 
+	/**
+	 * Global tabs live in their own non-autoloaded option, for the same reason
+	 * as templates above: their HTML content can grow large, and unlike
+	 * templates they used to live inside the main (autoloaded) settings
+	 * option, which meant every global tab's full content was loaded into
+	 * memory on every single request on the whole site – see
+	 * migrate_global_tabs_option().
+	 */
+	public const GLOBAL_TABS_OPTION_NAME = 'kitgenix_custom_tabs_for_woocommerce_global_tabs';
+
 	public const SETTINGS_GROUP  = 'kitgenix_custom_tabs_for_woocommerce_settings_group';
 	public const TEMPLATES_GROUP = 'kitgenix_custom_tabs_for_woocommerce_templates_group';
 
@@ -32,7 +42,6 @@ final class Settings {
 			'priority_base'    => 50,
 			'priority_step'    => 10,
 			'hide_tab_heading' => 0,
-			'global_tabs'      => [],
 		];
 	}
 
@@ -154,6 +163,7 @@ final class Settings {
 		}
 
 		self::migrate_templates_option();
+		self::migrate_global_tabs_option();
 	}
 
 	/**
@@ -178,6 +188,32 @@ final class Settings {
 		}
 
 		unset( $existing['tab_templates'] );
+		update_option( self::OPTION_NAME, $existing );
+	}
+
+	/**
+	 * One-time, idempotent migration: move `global_tabs` out of the main
+	 * (autoloaded) settings option into its own non-autoloaded option, mirroring
+	 * migrate_templates_option() above. Safe to run on every request – it only
+	 * acts once (the source key is removed after migrating), and does nothing
+	 * on an install that never stored global tabs in the old location.
+	 */
+	private static function migrate_global_tabs_option(): void {
+		$existing = get_option( self::OPTION_NAME, null );
+		if ( ! is_array( $existing ) || ! array_key_exists( 'global_tabs', $existing ) ) {
+			return;
+		}
+
+		$old_global_tabs = is_array( $existing['global_tabs'] ) ? $existing['global_tabs'] : [];
+
+		if ( ! empty( $old_global_tabs ) ) {
+			$current_new = get_option( self::GLOBAL_TABS_OPTION_NAME, null );
+			if ( ! is_array( $current_new ) || empty( $current_new ) ) {
+				update_option( self::GLOBAL_TABS_OPTION_NAME, $old_global_tabs, false );
+			}
+		}
+
+		unset( $existing['global_tabs'] );
 		update_option( self::OPTION_NAME, $existing );
 	}
 
@@ -208,6 +244,13 @@ final class Settings {
 		// force_templates_autoload_off() for why.
 		add_action( 'add_option_' . self::TEMPLATES_OPTION_NAME, [ self::class, 'force_templates_autoload_off' ] );
 		add_action( 'update_option_' . self::TEMPLATES_OPTION_NAME, [ self::class, 'force_templates_autoload_off' ] );
+
+		// Global tabs aren't registered with register_setting() – they're never
+		// posted directly to options.php as their own option (see sanitize(),
+		// which writes this option as a side effect of saving the main settings
+		// option) – but still need the same forced autoload-off treatment.
+		add_action( 'add_option_' . self::GLOBAL_TABS_OPTION_NAME, [ self::class, 'force_global_tabs_autoload_off' ] );
+		add_action( 'update_option_' . self::GLOBAL_TABS_OPTION_NAME, [ self::class, 'force_global_tabs_autoload_off' ] );
 	}
 
 	/**
@@ -217,8 +260,22 @@ final class Settings {
 	 * alloptions cache loaded on every request.
 	 */
 	public static function force_templates_autoload_off(): void {
+		self::force_option_autoload_off( self::TEMPLATES_OPTION_NAME );
+	}
+
+	/**
+	 * Ensure the global tabs option never autoloads, regardless of WordPress
+	 * core version. Global tab content is rendered on the frontend only for
+	 * matching products/visitors, never needed on every request, so the full
+	 * library must not be pulled into the alloptions cache.
+	 */
+	public static function force_global_tabs_autoload_off(): void {
+		self::force_option_autoload_off( self::GLOBAL_TABS_OPTION_NAME );
+	}
+
+	private static function force_option_autoload_off( string $option_name ): void {
 		if ( function_exists( 'wp_set_option_autoload' ) ) {
-			wp_set_option_autoload( self::TEMPLATES_OPTION_NAME, false );
+			wp_set_option_autoload( $option_name, false );
 			return;
 		}
 
@@ -228,7 +285,7 @@ final class Settings {
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- no public API exists on WP < 6.4 to change an existing option's autoload flag.
-		$wpdb->update( $wpdb->options, [ 'autoload' => 'no' ], [ 'option_name' => self::TEMPLATES_OPTION_NAME ] );
+		$wpdb->update( $wpdb->options, [ 'autoload' => 'no' ], [ 'option_name' => $option_name ] );
 		wp_cache_delete( 'alloptions', 'options' );
 	}
 
@@ -271,12 +328,24 @@ final class Settings {
 		if ( array_key_exists( 'hide_tab_heading', $value ) ) {
 			$out['hide_tab_heading'] = empty( $value['hide_tab_heading'] ) ? 0 : 1;
 		}
-		if ( array_key_exists( 'global_tabs', $value ) ) {
-			$out['global_tabs'] = self::sanitize_tabs_rows( $value['global_tabs'], (int) $out['max_tabs'], 'global' );
-		}
 
-		// Always enforce max tabs (even if only max_tabs was changed).
-		$out['global_tabs'] = self::sanitize_tabs_rows( $out['global_tabs'], (int) $out['max_tabs'], 'global' );
+		// Global tabs live in their own non-autoloaded option (GLOBAL_TABS_OPTION_NAME),
+		// not in this one – see the class doc comment on that constant. Persist them
+		// there as a side effect of saving the main settings, then make sure the key
+		// never ends up back in $out, which WordPress will save as this (autoloaded)
+		// option's value.
+		if ( array_key_exists( 'global_tabs', $value ) ) {
+			self::save_global_tabs( self::sanitize_tabs_rows( $value['global_tabs'], (int) $out['max_tabs'], 'global' ) );
+		} else {
+			// max_tabs (or another scalar) changed without touching global_tabs itself;
+			// still re-clamp the existing global tabs to the (possibly new) max.
+			$existing_global_tabs = self::global_tabs();
+			$clamped_global_tabs  = self::sanitize_tabs_rows( $existing_global_tabs, (int) $out['max_tabs'], 'global' );
+			if ( $clamped_global_tabs !== $existing_global_tabs ) {
+				self::save_global_tabs( $clamped_global_tabs );
+			}
+		}
+		unset( $out['global_tabs'] );
 
 		// A pre-2.0.0 option still carrying its old 'tab_templates' key would
 		// otherwise be re-added by array_merge() with defaults() above; strip it
@@ -285,6 +354,13 @@ final class Settings {
 		unset( $out['tab_templates'] );
 
 		return $out;
+	}
+
+	/**
+	 * @param array<int,array<string,mixed>> $rows
+	 */
+	private static function save_global_tabs( array $rows ): void {
+		update_option( self::GLOBAL_TABS_OPTION_NAME, $rows, false );
 	}
 
 	/**
@@ -311,8 +387,8 @@ final class Settings {
 	 * @return array<int,array<string,mixed>>
 	 */
 	public static function global_tabs(): array {
-		$s = self::get_settings();
-		return isset( $s['global_tabs'] ) && is_array( $s['global_tabs'] ) ? $s['global_tabs'] : [];
+		$raw = get_option( self::GLOBAL_TABS_OPTION_NAME, [] );
+		return is_array( $raw ) ? $raw : [];
 	}
 
 	/**

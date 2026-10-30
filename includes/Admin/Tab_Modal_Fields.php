@@ -99,6 +99,12 @@ trait Tab_Modal_Fields {
 								<option value="<?php echo esc_attr( (string) $term->term_id ); ?>"><?php echo esc_html( $term->name ); ?></option>
 							<?php endforeach; ?>
 						</select>
+						<?php if ( 'categories' === $dimension ) : ?>
+							<label class="kitgenix-custom-tabs-for-woocommerce-target-row__children-toggle">
+								<input type="checkbox" data-kitgenix-custom-tabs-for-woocommerce-target-include-children="1" checked="checked" />
+								<?php esc_html_e( 'Also match products in sub-categories', 'kitgenix-custom-tabs-for-woocommerce' ); ?>
+							</label>
+						<?php endif; ?>
 					<?php endif; ?>
 				</div>
 			<?php endforeach; ?>

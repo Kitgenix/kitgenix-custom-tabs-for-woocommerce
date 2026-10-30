@@ -154,6 +154,7 @@ final class Settings_UI {
 					'copyLabel' => __( 'Copy', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'moveUp' => __( 'Move up', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'moveDown' => __( 'Move down', 'kitgenix-custom-tabs-for-woocommerce' ),
+					'dragToReorder' => __( 'Drag to reorder', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'disableTab' => __( 'Disable', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'enableTab' => __( 'Enable', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'disabledBadge' => __( 'Disabled', 'kitgenix-custom-tabs-for-woocommerce' ),
@@ -434,7 +435,7 @@ final class Settings_UI {
 		$max_tabs = Settings::template_library_max();
 		$base     = isset( $settings['priority_base'] ) ? (int) $settings['priority_base'] : 50;
 		$step     = isset( $settings['priority_step'] ) ? (int) $settings['priority_step'] : 10;
-		$tabs     = ( isset( $settings['global_tabs'] ) && is_array( $settings['global_tabs'] ) ) ? $settings['global_tabs'] : [];
+		$tabs     = Settings::global_tabs();
 		$empty_message = __( 'No global tabs yet. Click Add Tab to create one.', 'kitgenix-custom-tabs-for-woocommerce' );
 
 		echo '<form method="post" action="options.php" autocomplete="off" novalidate>';
@@ -734,6 +735,7 @@ final class Settings_UI {
 
 		echo '<tr data-kitgenix-custom-tabs-for-woocommerce-row="1" data-index="' . esc_attr( (string) $index ) . '" class="' . esc_attr( trim( $row_class ) ) . '">'
 			. '<td>'
+			. '<span class="kitgenix-custom-tabs-for-woocommerce-drag-handle dashicons dashicons-menu" data-kitgenix-custom-tabs-for-woocommerce-drag-handle="1" aria-hidden="true" title="' . esc_attr__( 'Drag to reorder', 'kitgenix-custom-tabs-for-woocommerce' ) . '"></span>'
 			. '<strong data-kitgenix-custom-tabs-for-woocommerce-row-title="1">' . esc_html( $display_title ) . '</strong>'
 			. '<div class="kitgenix-custom-tabs-for-woocommerce-tabs-subtitle" data-kitgenix-custom-tabs-for-woocommerce-row-subtitle="1">' . esc_html( $subtitle ) . '</div>'
 			. ( $enabled ? '' : '<span class="kitgenix-badge neutral" data-kitgenix-custom-tabs-for-woocommerce-row-disabled-badge="1">' . esc_html__( 'Disabled', 'kitgenix-custom-tabs-for-woocommerce' ) . '</span>' )
@@ -1094,7 +1096,7 @@ final class Settings_UI {
 			. '<div class="kitgenix-card-head-actions">'
 			. '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="display:inline-flex;align-items:center;gap:6px;">'
 			. '<input type="hidden" name="action" value="kitgenix_custom_tabs_for_woocommerce_save_log_retention" />'
-			. wp_nonce_field( 'kitgenix_custom_tabs_for_woocommerce_save_log_retention', '_wpnonce', true, false )
+			. wp_nonce_field( 'kitgenix_custom_tabs_for_woocommerce_save_log_retention', '_wpnonce', true, false ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_nonce_field() output is already escaped by WordPress core.
 			. '<label for="kitgenix_custom_tabs_for_woocommerce_log_retention_days" title="' . esc_attr__( 'Log entries older than the selected period are removed automatically.', 'kitgenix-custom-tabs-for-woocommerce' ) . '">' . esc_html__( 'Auto-delete logs after', 'kitgenix-custom-tabs-for-woocommerce' ) . '</label>'
 			. '<select id="kitgenix_custom_tabs_for_woocommerce_log_retention_days" name="kitgenix_custom_tabs_for_woocommerce_log_retention_days">'
 			. '<option value="7" ' . selected( 7, $retention_days, false ) . '>' . esc_html__( '7 days', 'kitgenix-custom-tabs-for-woocommerce' ) . '</option>'

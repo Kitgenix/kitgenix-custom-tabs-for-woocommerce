@@ -140,7 +140,7 @@ final class Portability {
 
 		$settings_to_save = 'merge' === $mode ? array_merge( $current, $imported_settings ) : array_merge( Settings::defaults(), $imported_settings );
 		$settings_to_save['global_tabs'] = Settings::sanitize_tabs_rows(
-			'merge' === $mode ? array_merge( $current['global_tabs'], $imported_global ) : $imported_global,
+			'merge' === $mode ? array_merge( Settings::global_tabs(), $imported_global ) : $imported_global,
 			$max,
 			'global'
 		);
@@ -204,22 +204,41 @@ final class Portability {
 			exit;
 		}
 
-		fputcsv( $out, [ 'title', 'nickname', 'slug', 'priority', 'enabled', 'content' ] );
+		fputcsv( $out, [ 'title', 'nickname', 'slug', 'priority', 'enabled', 'content' ], ',', '"', '\\' );
 		foreach ( $rows as $row ) {
 			if ( ! is_array( $row ) ) {
 				continue;
 			}
-			fputcsv( $out, [
+			fputcsv( $out, array_map( [ self::class, 'neutralize_csv_formula' ], [
 				(string) ( $row['title'] ?? '' ),
 				(string) ( $row['nickname'] ?? '' ),
 				(string) ( $row['slug'] ?? '' ),
 				(string) ( $row['priority'] ?? 0 ),
 				( ! array_key_exists( 'enabled', $row ) || ! empty( $row['enabled'] ) ) ? '1' : '0',
 				(string) ( $row['content'] ?? '' ),
-			] );
+			] ), ',', '"', '\\' );
 		}
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- closing a php://output stream handle (not a real file); WP_Filesystem doesn't apply to stream wrappers.
 		exit;
+	}
+
+	/**
+	 * Neutralize CSV/spreadsheet formula injection: a cell that opens with =, +, -, @,
+	 * or a tab/CR is treated as a formula by Excel/Sheets when the file is opened.
+	 * Prefixing a single quote forces it to be read as text.
+	 */
+	private static function neutralize_csv_formula( string $value ): string {
+		return preg_match( '/^[=+\-@\t\r]/', $value ) ? "'" . $value : $value;
+	}
+
+	/**
+	 * Reverse neutralize_csv_formula() on import so exported files round-trip.
+	 *
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	private static function restore_csv_formula( $value ) {
+		return is_string( $value ) && preg_match( "/^'[=+\-@\t\r]/", $value ) ? substr( $value, 1 ) : $value;
 	}
 
 	public static function handle_import_csv(): void {
@@ -256,7 +275,7 @@ final class Portability {
 		fwrite( $handle, $contents ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- writing into an in-memory php://temp stream, not a real file.
 		rewind( $handle );
 
-		$header = fgetcsv( $handle );
+		$header = fgetcsv( $handle, null, ',', '"', '\\' );
 		if ( ! is_array( $header ) ) {
 			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- closing an in-memory php://temp stream, not a real file.
 			self::redirect_error( 'csv' );
@@ -266,10 +285,10 @@ final class Portability {
 		}, $header );
 
 		$imported = [];
-		while ( ( $line = fgetcsv( $handle ) ) !== false ) {
+		while ( ( $line = fgetcsv( $handle, null, ',', '"', '\\' ) ) !== false ) {
 			$row = [];
 			foreach ( $header as $i => $key ) {
-				$row[ $key ] = $line[ $i ] ?? '';
+				$row[ $key ] = self::restore_csv_formula( $line[ $i ] ?? '' );
 			}
 			$imported[] = $row;
 		}

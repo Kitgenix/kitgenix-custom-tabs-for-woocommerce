@@ -128,6 +128,7 @@ final class Product_Tabs {
 					'copyLabel' => __( 'Copy', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'moveUp' => __( 'Move up', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'moveDown' => __( 'Move down', 'kitgenix-custom-tabs-for-woocommerce' ),
+					'dragToReorder' => __( 'Drag to reorder', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'disableTab' => __( 'Disable', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'enableTab' => __( 'Enable', 'kitgenix-custom-tabs-for-woocommerce' ),
 					'disabledBadge' => __( 'Disabled', 'kitgenix-custom-tabs-for-woocommerce' ),
@@ -271,6 +272,7 @@ final class Product_Tabs {
 
 		echo '<tr data-kitgenix-custom-tabs-for-woocommerce-row="1" data-index="' . esc_attr( (string) $index ) . '" class="' . esc_attr( trim( $row_class ) ) . '">'
 			. '<td>'
+			. '<span class="kitgenix-custom-tabs-for-woocommerce-drag-handle dashicons dashicons-menu" data-kitgenix-custom-tabs-for-woocommerce-drag-handle="1" aria-hidden="true" title="' . esc_attr__( 'Drag to reorder', 'kitgenix-custom-tabs-for-woocommerce' ) . '"></span>'
 			. '<strong data-kitgenix-custom-tabs-for-woocommerce-row-title="1">' . esc_html( $display_title ) . '</strong>'
 			. '<div class="kitgenix-custom-tabs-for-woocommerce-tabs-subtitle" data-kitgenix-custom-tabs-for-woocommerce-row-subtitle="1">' . esc_html( $subtitle ) . '</div>'
 			. ( $enabled ? '' : '<span class="kitgenix-badge neutral" data-kitgenix-custom-tabs-for-woocommerce-row-disabled-badge="1">' . esc_html__( 'Disabled', 'kitgenix-custom-tabs-for-woocommerce' ) . '</span>' )

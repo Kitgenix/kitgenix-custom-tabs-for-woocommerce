@@ -8,16 +8,16 @@
  * Author Support URI: https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/support
  * Feature Request URI: https://kitgenix.com/plugins/kitgenix-custom-tabs-for-woocommerce/feature-request
  * Description:       Add custom WooCommerce product tabs with per-product content, global tabs, and lightweight controls.
- * Version:           2.1.2
+ * Version:           2.2.0
  * Requires at least: 6.0
- * Tested up to:      7.1
- * Requires PHP:      8.1
+ * Tested up to:      7.4
+ * Requires PHP:      8.2
  * Author:            Kitgenix
  * Author URI:        https://kitgenix.com/
  * Donate link:       https://www.paypal.com/donate/?hosted_button_id=KALF36K6JJ9B2
  * Requires Plugins:  woocommerce
  * WC requires at least: 10.0
- * WC tested up to:   11.0.1
+ * WC tested up to:   11.2.1
  * License:           GPLv3 or later
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       kitgenix-custom-tabs-for-woocommerce
@@ -51,7 +51,7 @@ defined( 'ABSPATH' ) || exit;
 use KitgenixCustomTabsForWooCommerce\Plugin;
 
 if ( ! defined( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_VERSION' ) ) {
-	define( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_VERSION', '2.1.2' );
+	define( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_VERSION', '2.2.0' );
 }
 if ( ! defined( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_FILE' ) ) {
 	define( 'KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_FILE', __FILE__ );
@@ -749,6 +749,11 @@ add_action(
 		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
 			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
 				'custom_order_tables',
+				KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_FILE,
+				true
+			);
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+				'cart_checkout_blocks',
 				KITGENIX_CUSTOM_TABS_FOR_WOOCOMMERCE_FILE,
 				true
 			);

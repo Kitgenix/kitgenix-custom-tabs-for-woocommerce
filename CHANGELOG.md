@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.2.0 – 30 October 2026
+
+- **New:** Drag-and-drop tab ordering. Rearrange product tabs, Global Tabs and Templates by dragging the handle beside each tab name (works with mouse, pen and touch). The keyboard-accessible Move Up and Move Down controls remain available. Dropping a tab redistributes the existing position values in the new order, so the admin table always matches the frontend tab order and tabs keep their place relative to WooCommerce's default tabs.
+- **Fix:** Global tab content no longer loads on every request on the whole site. Global tabs previously lived inside the main settings option, which WordPress autoloads on every page load, so every global tab's full HTML content was pulled into memory on every single request regardless of whether that page needed it. Global tabs now live in their own, non-autoloaded option, the same way reusable templates already do. Existing global tabs are migrated across automatically the next time the plugin runs; no setup is needed.
+- **New:** Added an "Also match products in sub-categories" option to each category rule in a global tab's product targeting (Settings → Global Tabs → Product targeting). Previously, a rule that included or excluded a parent category (for example "Clothing") never matched products filed only in a child category (for example "Clothing › Shirts"). Turning this on makes the rule follow the category tree. It defaults on for a newly added category rule and off for every category rule saved before this release, so no existing global tab's matching changes on its own – you need to open it and turn the option on yourself.
+- **Security:** CSV exports of global tabs and templates now neutralise spreadsheet formula injection by prefixing any value that starts with `=`, `+`, `-`, `@`, a tab or a carriage return with an apostrophe, so tab content cannot run as a formula when an export is opened in Excel, Google Sheets or similar software.
+- **Improved:** CSV imports automatically remove that protective apostrophe again, so files exported by 2.2.0 import back unchanged.
+- **Improved:** Raised the minimum PHP version to 8.2 (`Requires PHP: 8.2`).
+- **Improved:** Tested up to WordPress 7.4 and WooCommerce 11.2.1, and reviewed for compatibility with PHP 8.2 to 8.5. The full codebase passes syntax checks on PHP 8.5 and a PHPCompatibility scan for PHP 8.2–8.5, and uses no dynamic properties or functions deprecated in PHP 8.2–8.5.
+- **Improved:** Declared compatibility with the WooCommerce Cart and Checkout blocks (`cart_checkout_blocks`), so WooCommerce no longer lists the plugin as possibly incompatible in the Checkout block editor.
+- **Fix:** The CSV `$escape` argument is now passed explicitly in the global tab CSV export and import, preventing "the $escape parameter must be provided" deprecation notices on PHP 8.4 and later. The CSV format is unchanged.
+- **Dev:** Corrected a WordPress coding-standards (PHPCS) escaping annotation on the Activity Log's inline log-retention form; `wp_nonce_field()` output is already escaped by WordPress core, so this is a no-op code-quality fix.
+- **Dev:** Removed the PluginScore verification code from the readme, as Kitgenix Plugin Score has been discontinued.
+- **Dev:** Bumped the version to 2.2.0 across the plugin.
+- **Documentation:** Regenerated the `.pot` translation template for 2.2.0.
+- **Documentation:** The readme changelog now lists only the current release. The full release history is in `CHANGELOG.md`.
+
+## 2.1.2 – 13 October 2026
+
+- **Fix:** Bump version to 2.1.2 across the plugin.
+
+## 2.1.1 – 13 October 2026
+
+- **Fix:** Updated PluginScore Verification code.
+
 ## 2.1.0 – 13 October 2026
 
 - **New:** Added a configurable log auto-delete setting (7/14/30 days) to automatically remove old event log entries.

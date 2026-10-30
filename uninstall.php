@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function kitgenix_custom_tabs_for_woocommerce_remove_site_data(): void {
 	delete_option( 'kitgenix_custom_tabs_for_woocommerce_settings' );
 	delete_option( 'kitgenix_custom_tabs_for_woocommerce_templates' );
+	delete_option( 'kitgenix_custom_tabs_for_woocommerce_global_tabs' );
 	delete_option( 'kitgenix_custom_tabs_for_woocommerce_event_log' );
 	delete_option( 'kitgenix_custom_tabs_for_woocommerce_do_activation_redirect' );
 	delete_transient( 'kitgenix_custom_tabs_for_woocommerce_usage_stats' );

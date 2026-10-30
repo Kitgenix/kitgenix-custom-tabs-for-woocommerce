@@ -3,12 +3,11 @@ Contributors: kitgenix
 Donate link: https://www.paypal.com/donate/?hosted_button_id=KALF36K6JJ9B2
 Tags: woocommerce, product tabs, custom product tabs, global tabs, product content
 Requires at least: 6.0
-Tested up to: 7.1
-Requires PHP: 8.1
-Stable tag: 2.1.2
+Tested up to: 7.4
+Requires PHP: 8.2
+Stable tag: 2.2.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-PluginScore Verification: pluginscore-verify-c9af7597618f55ab807b892d2e97386d
 
 Create WooCommerce product tabs with per-product content, global targeting, visibility rules, templates and bulk tools.
 
@@ -33,6 +32,7 @@ Developed by [Kitgenix](https://kitgenix.com/).
 * Restrict tab visibility by logged-in/logged-out state.
 * Restrict tab visibility by WordPress user role.
 * Restrict tabs by stock status and product purchasability.
+* Reorder tabs with drag and drop, or with keyboard-accessible Move Up and Move Down controls.
 * Set explicit tab priorities and use configurable default priority/step values.
 * Enable, disable and duplicate tabs without discarding the original content.
 * Choose whether the heading inside the tab panel is displayed.
@@ -118,9 +118,9 @@ The plugin does not need to read or write WooCommerce orders in order to display
 
 == Compatibility ==
 
-* WordPress 6.0 or later; tested up to WordPress 7.1.
-* PHP 8.1 or later.
-* WooCommerce 10.0 or later; tested with WooCommerce 11.0.1.
+* WordPress 6.0 or later; tested up to WordPress 7.4.
+* PHP 8.2 or later.
+* WooCommerce 10.0 or later; tested with WooCommerce 11.2.1.
 * Declares WooCommerce HPOS compatibility.
 * Uses the native `woocommerce_product_tabs` filter for frontend output.
 * Product-specific tabs are stored as product meta; the plugin does not read or write WooCommerce order data.
@@ -220,84 +220,26 @@ https://www.paypal.com/donate/?hosted_button_id=KALF36K6JJ9B2
 
 == Upgrade Notice ==
 
-= 2.1.2 =
-Version 2.1.2 is recommended for all sites.
+= 2.2.0 =
+Adds drag-and-drop tab ordering and security hardening for CSV exports. Recommended for all sites.
 
 == Changelog ==
 
-= 2.1.2 (13 October 2026) =
+= 2.2.0 (30 October 2026) =
 
-* Fix: Bump version to 2.1.2 across the plugin.
+* New: Drag-and-drop tab ordering. Rearrange product tabs, Global Tabs and Templates by dragging the handle beside each tab name; the keyboard-accessible Move Up and Move Down controls remain available. Dropping a tab redistributes the existing position values in the new order, so the admin table always matches the frontend tab order.
+* Fix: Global tab content no longer loads on every request on the whole site. Global tabs previously lived inside the main settings option, which WordPress autoloads on every page load, so every global tab's full HTML content was pulled into memory on every single request regardless of whether that page needed it. Global tabs now live in their own, non-autoloaded option, the same way reusable templates already do. Existing global tabs are migrated across automatically the next time the plugin runs; no setup is needed.
+* New: Added an "Also match products in sub-categories" option to each category rule in a global tab's product targeting (Settings → Global Tabs → Product targeting). Previously, a rule that included or excluded a parent category never matched products filed only in a child category. Turning this on makes the rule follow the category tree. It defaults on for a newly added category rule and off for every category rule saved before this release, so no existing global tab's matching changes on its own.
+* Security: CSV exports of global tabs and templates now neutralise spreadsheet formula injection by prefixing any value that starts with `=`, `+`, `-`, `@`, a tab or a carriage return with an apostrophe, so tab content cannot run as a formula when an export is opened in Excel, Google Sheets or similar software.
+* Improved: CSV imports automatically remove that protective apostrophe again, so files exported by 2.2.0 import back unchanged.
+* Improved: Raised the minimum PHP version to 8.2 (`Requires PHP: 8.2`).
+* Improved: Tested up to WordPress 7.4 and WooCommerce 11.2.1, and reviewed for compatibility with PHP 8.2 to 8.5. The full codebase passes syntax checks on PHP 8.5 and a PHPCompatibility scan for PHP 8.2–8.5, and uses no dynamic properties or functions deprecated in PHP 8.2–8.5.
+* Improved: Declared compatibility with the WooCommerce Cart and Checkout blocks (`cart_checkout_blocks`), so WooCommerce no longer lists the plugin as possibly incompatible in the Checkout block editor.
+* Fix: The CSV `$escape` argument is now passed explicitly in the global tab CSV export and import, preventing "the $escape parameter must be provided" deprecation notices on PHP 8.4 and later. The CSV format is unchanged.
+* Dev: Corrected a WordPress coding-standards (PHPCS) escaping annotation on the Activity Log's inline log-retention form; `wp_nonce_field()` output is already escaped by WordPress core, so this is a no-op code-quality fix.
+* Dev: Removed the PluginScore verification code from the readme, as Kitgenix Plugin Score has been discontinued.
+* Dev: Bumped the version to 2.2.0 across the plugin.
+* Documentation: Regenerated the `.pot` translation template for 2.2.0.
+* Documentation: The readme changelog now lists only the current release. The full release history is in `CHANGELOG.md`.
 
-= 2.1.1 (13 October 2026) =
-
-* Fix: Updated PluginScore Verification code.
-
-= 2.1.0 (13 October 2026) =
-
-* New: Added a configurable log auto-delete setting (7/14/30 days) to automatically remove old event log entries.
-* New: Added a "Request a Feature" button to the Need Help? sidebar, linking directly to this plugin's page on the Kitgenix roadmap (https://roadmap.kitgenix.com).
-* New: Added a "Request a Feature" banner below the plugin grid on the Kitgenix Hub page, linking to the shared Kitgenix roadmap.
-
-= 2.0.0 (31 August 2026) =
-
-* New: Added Conditional Global Tabs, allowing a global tab to target all products or be restricted by specific products, categories, tags, and/or product types, each with independent Include/Exclude rules. Exclude rules always take precedence, and matching uses the already-loaded product without additional database queries per tab.
-* New: Added Tab Visibility Conditions so product-specific and global tabs can be restricted by visitor login state, user role, stock status, and/or purchasability using four independent conditions without introducing a complex rules engine.
-* New: Added an Enabled/Disabled toggle to every product tab, global tab, and template row so tabs can be temporarily disabled without deleting or losing their content and configuration.
-* New: Added keyboard-accessible Move Up and Move Down controls that swap the actual stored `priority` values of neighbouring tabs, ensuring the management table order always matches frontend rendering order.
-* New: Global Tabs and Templates tables now support live search and click-to-sort columns for Tab/Template, Slug, and Position.
-* New: Added a Scope column to the Global Tabs table showing whether each tab applies to all products or uses targeted rules, calculated entirely from the tab's saved configuration without live product-count queries.
-* New: Added a Portability tab with full-fidelity JSON export/import for settings, Global Tabs, and Templates, including visibility and targeting rules.
-* New: JSON imports are versioned and validated and include a client-side preview of the uploaded file before Replace or Merge is committed.
-* New: Added CSV export/import for Global Tabs and Templates as a simpler spreadsheet-friendly portability format.
-* New: Added WooCommerce Products bulk actions for applying a saved Kitgenix tab template to multiple selected products in one operation.
-* New: Added the `[kitgenix_tab]` shortcode for rendering a saved template anywhere WordPress shortcodes are processed, including posts, pages, widgets, and other product tabs.
-* New: Added unsaved-change protection to the product editor Custom Tabs panel and the Settings, Global Tabs, Templates, and Portability forms, warning before navigating away with unsaved edits.
-* New: Redesigned the entire admin interface around the shared Kitgenix design system with a sticky topbar, cross-plugin navigation, consistent cards, tables, and controls.
-* New: Added live in-page settings search with "/" and Cmd/Ctrl+K keyboard shortcuts.
-* New: Added a light/dark theme toggle for the admin interface, with the selected preference remembered between visits.
-* New: Added dismissible admin notices throughout the plugin's management screens.
-* New: Added three developer filters for custom tab behaviour: `kitgenix_custom_tabs_for_woocommerce_tab_eligible`, `kitgenix_custom_tabs_for_woocommerce_tab_priority`, and `kitgenix_custom_tabs_for_woocommerce_tab_content`.
-* Improved: Rebuilt the General Settings interface using shared Kitgenix cards, labelled setting rows, and toggle switches instead of the previous WordPress form-table layout.
-* Improved: Updated the Kitgenix Hub page to match the shared topbar and admin design system.
-* Improved: Added Image Optimizer to the Kitgenix Hub plugin catalogue.
-* Improved: Renamed the MultiStore Hub listing to "MultiStore for WooCommerce" and updated its associated plugin slug.
-* Improved: Rebuilt the Support, Log, Global Tabs, and Templates screens with the shared card layout, notices, table components, and empty states for a consistent experience across Kitgenix plugins.
-* Improved: The Log tab now displays entries in a searchable, paginated table containing time, context, outcome, and a plain-English note instead of a plain text block.
-* Improved: Tab-save requests rejected because of missing permissions, expired security tokens, or invalid requests are now recorded in the Log tab rather than failing without a diagnostic trail.
-* Improved: JSON/CSV imports and bulk-applied templates are now recorded in the Log for easier auditing and troubleshooting.
-* Improved: Added a reference table to the Log tab explaining what each recorded category means and whether administrator action is required, distinguishing routine issues such as stale security tokens from genuine problems.
-* Improved: The Support tab is now three focused cards – a donate card with a collapsible monthly-amount picker, a "what your support funds" summary, and a "get involved" panel for reviews and plugin links – replacing the previous stack of donate, trust, and community cards.
-* Improved: Moved the Log tab directly before Support in the admin navigation for a more logical workflow.
-* Improved: Restyled the Edit Tab modal using the shared Kitgenix modal component and extended it with Visibility Conditions and, for Global Tabs, Product Targeting controls.
-* Improved: Updated the WooCommerce product editor Custom Tabs panel to use the Kitgenix brand-blue palette, spacing scale, and border-radius system instead of the previous purple-toned styling.
-* Improved: Saved Templates now use their dedicated library limit of 100 entries instead of incorrectly inheriting the per-product `max_tabs` setting, which defaults to 10.
-* Performance: Templates are now stored in their own dedicated WordPress option with autoload explicitly disabled instead of being stored inside the main frontend settings option.
-* Performance: Moving Templates out of the main settings option prevents large admin-only template libraries from being loaded into WordPress's `alloptions` cache on every frontend request.
-* Performance: Template-option autoloading is explicitly disabled regardless of WordPress core version, maintaining the optimisation for versions before the `register_setting()` autoload argument was introduced.
-* Performance: Global tab visibility and targeting checks perform no additional database queries per tab per page load, relying on the already-loaded WooCommerce product object and cached WordPress taxonomy lookups through `has_term()`.
-* Performance: Existing Support-tab usage statistics continue to be cached for one hour and are only recalculated from admin views, never during frontend page loads.
-* Fix: The "Max tabs per product" limit is now enforced once across the combined set of global and product-specific tabs. Previously each group enforced the limit independently, allowing up to twice the configured maximum to render.
-* Fix: Modal open/close behaviour now uses the `hidden` attribute instead of a CSS class, preventing visible modal state from becoming out of sync with its underlying accessibility state.
-* Fix: Empty-state messaging in Global Tabs and Templates tables now renders as a consistent empty-state component with an icon and message in both server-rendered and JavaScript-rendered states.
-* Fix: Number inputs throughout the settings screens are no longer cramped to a fixed 50px width.
-* Fix: The Support tab's "Copy plugin link" action now distinguishes successful clipboard copies from failures caused by denied clipboard permissions, unsupported APIs, or insecure contexts instead of always displaying "Copied!".
-* Fix: Corrected the Templates screen regression that caused the template library to use the per-product `max_tabs` limit rather than its intended 100-template library limit.
-* Security: The Quill rich-text editor is now bundled locally under `assets/vendor/quill/` instead of loading executable JavaScript from `cdn.jsdelivr.net` on product edit and plugin settings screens.
-* Security: JSON and CSV imports now pass through the same `Settings::sanitize_tabs_rows()` sanitisation used for manually saved tab data, ensuring imported content is never trusted as pre-sanitised.
-* Security: Templates applied through the WooCommerce Products bulk action now pass through the same tab-row sanitisation pipeline as manual saves and imports.
-* Security: Every new admin-post handler for JSON/CSV import and export requires the appropriate `manage_woocommerce` or `manage_options` capability and a matching nonce before processing.
-* Compatibility: Confirmed compatibility with WordPress 7.1 and corrected the readme header, which previously still reported WordPress 7.0 despite the plugin header already declaring 7.1.
-* Compatibility: Verified compatibility with WooCommerce 11.0.1 across the classic product editor, product-tab rendering for simple, variable, grouped, and external products, and the existing HPOS declaration.
-* Compatibility: Reviewed WooCommerce 11.0 and 11.0.1 developer advisories and confirmed that changes relating to phone validation hooks, ESLint configuration, the Product Image block, shop-page queried objects, shipping-class taxonomy visibility, reserve-stock duration, and order-item actions do not affect hooks used by this plugin.
-* Compatibility: Confirmed the plugin continues to use WooCommerce's supported classic meta-box Product Data editor after WooCommerce 11.0 removed the experimental block-based Product Editor Beta.
-* Compatibility: Re-verified the plugin's HPOS (`custom_order_tables`) compatibility declaration. The plugin does not read or modify WooCommerce order data.
-* Removed: Removed reliance on the externally hosted Quill editor from `cdn.jsdelivr.net`; the editor library is now included locally with the plugin.
-* Documentation: Rewrote the Developers section to document the dedicated Templates option, the complete tab-row structure including `enabled`, `visibility`, and `target`, Portability admin-post actions, the `[kitgenix_tab]` shortcode, WooCommerce bulk action, and new developer filters.
-* Documentation: Documented the locally bundled Quill library and its licence under External Services.
-* Documentation: Documented WooCommerce's product-search AJAX endpoint under External Services.
-* Documentation: Documented that the plugin's Custom Tabs admin interface uses WooCommerce's classic meta-box product editor for merchants evaluating compatibility with alternative product editing interfaces.
-* Dev: Added `KitgenixCustomTabsForWooCommerce\Core\Tab_Matcher` as the shared targeting and visibility engine, including `is_eligible()`, `matches_target()`, and `is_visible()`.
-* Dev: Added shared `sanitize_target()` and `sanitize_visibility()` sanitisation methods for the new targeting and visibility configuration structures.
-* Dev: Extracted the shared Visibility Conditions and Product Targeting modal markup into a `Tab_Modal_Fields` trait used by both `Product_Tabs` and `Settings_UI`, preventing the product-editor and plugin-settings modal implementations from drifting apart.
-* Dev: Refreshed and renamed the Kitgenix logo and icon asset library, including light, dark, and primary variants used throughout the admin interface, Kitgenix Hub, and WooCommerce product editor.
+Full release history is available in the plugin's `CHANGELOG.md` file.

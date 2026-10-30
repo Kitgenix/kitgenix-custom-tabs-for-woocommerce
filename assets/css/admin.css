@@ -278,6 +278,38 @@
 }
 
 /* ----------------------------------------------------------------
+  Drag-and-drop row reordering
+----------------------------------------------------------------- */
+.kitgenix-custom-tabs-for-woocommerce-drag-handle {
+  margin-right: 6px;
+  vertical-align: middle;
+  color: var(--kitgenix-text-muted);
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-drag-handle:hover {
+  color: var(--kitgenix-brand);
+}
+
+.kitgenix-custom-tabs-for-woocommerce-is-sorting,
+.kitgenix-custom-tabs-for-woocommerce-is-sorting .kitgenix-custom-tabs-for-woocommerce-drag-handle {
+  cursor: grabbing;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-row-dragging td {
+  background: var(--kitgenix-brand-subtle, #F5F9FF) !important;
+}
+
+.kitgenix-custom-tabs-for-woocommerce-row-dragging td:first-child {
+  box-shadow: inset 3px 0 0 var(--kitgenix-brand);
+}
+
+/* ----------------------------------------------------------------
   Visibility conditions / product targeting sections in the modal
 ----------------------------------------------------------------- */
 .kitgenix-custom-tabs-for-woocommerce-scope [data-kitgenix-custom-tabs-for-woocommerce-visibility-section="1"],
@@ -300,6 +332,16 @@
 .kitgenix-custom-tabs-for-woocommerce-target-row__label {
   font-size: 12px;
   font-weight: 700;
+  color: var(--kitgenix-text-muted);
+}
+
+.kitgenix-custom-tabs-for-woocommerce-target-row__children-toggle {
+  grid-column: 2 / -1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 400;
   color: var(--kitgenix-text-muted);
 }
 

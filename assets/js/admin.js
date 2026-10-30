@@ -426,6 +426,133 @@
       markManagerDirty();
     }
 
+    // Drag-and-drop reordering via a per-row handle. Uses pointer events so
+    // mouse, pen and touch all work. The handle is pointer-only (aria-hidden);
+    // keyboard and screen-reader users keep the Move Up / Move Down buttons.
+    // On drop, the existing set of priority values is redistributed across
+    // the rows in their new visual order, so custom tabs keep the same slots
+    // relative to WooCommerce's default tabs (Description, Reviews, ...).
+    var drag = null;
+    var dragHandleSelector = '[data-kitgenix-custom-tabs-for-woocommerce-drag-handle="1"]';
+    var rowSelector = '[data-kitgenix-custom-tabs-for-woocommerce-row="1"]';
+
+    function getDataRows() {
+      return toArray(tbody.querySelectorAll(rowSelector));
+    }
+
+    function getRowOrderKey() {
+      return getDataRows().map(function (row) { return row.getAttribute('data-index'); }).join(',');
+    }
+
+    function applyPrioritiesFromDomOrder() {
+      var rows = getDataRows();
+      var values = rows.map(function (row) {
+        return toInt(getFieldValue(getFields(toInt(row.getAttribute('data-index'), 0)), 'priority'), 0);
+      }).sort(function (a, b) { return a - b; });
+
+      // Tied priorities would leave the frontend order undefined, so make the
+      // redistributed values strictly increasing.
+      for (var i = 1; i < values.length; i++) {
+        if (values[i] <= values[i - 1]) values[i] = values[i - 1] + 1;
+      }
+
+      var changed = false;
+      rows.forEach(function (row, pos) {
+        var fields = getFields(toInt(row.getAttribute('data-index'), 0));
+        if (!fields) return;
+        var next = String(values[pos]);
+        if (getFieldValue(fields, 'priority').trim() === next) return;
+        setFieldValue(fields, 'priority', next);
+        var posNode = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-row-position="1"]');
+        if (posNode) posNode.textContent = next;
+        changed = true;
+      });
+      return changed;
+    }
+
+    function resetColumnSort() {
+      var table = tbody.closest('table');
+      if (!table) return;
+      try {
+        table.dispatchEvent(new CustomEvent('kitgenix-sort-reset'));
+      } catch (_eSort) {}
+    }
+
+    function placeDraggedRow(clientY) {
+      var rows = getDataRows().filter(function (r) {
+        return r !== drag.row && r.offsetParent !== null;
+      });
+      if (!rows.length) return;
+
+      for (var i = 0; i < rows.length; i++) {
+        var rect = rows[i].getBoundingClientRect();
+        if (clientY < rect.top + rect.height / 2) {
+          if (drag.row.nextElementSibling !== rows[i]) tbody.insertBefore(drag.row, rows[i]);
+          return;
+        }
+      }
+      var last = rows[rows.length - 1];
+      if (last.nextElementSibling !== drag.row) tbody.insertBefore(drag.row, last.nextSibling);
+    }
+
+    function autoScroll(clientY) {
+      var edge = 48;
+      var h = window.innerHeight || document.documentElement.clientHeight;
+      if (clientY < edge) window.scrollBy(0, -12);
+      else if (clientY > h - edge) window.scrollBy(0, 12);
+    }
+
+    function endDrag(e) {
+      if (!drag || (e && e.pointerId !== drag.pointerId)) return;
+      var d = drag;
+      drag = null;
+
+      d.row.classList.remove('kitgenix-custom-tabs-for-woocommerce-row-dragging');
+      tbody.classList.remove('kitgenix-custom-tabs-for-woocommerce-is-sorting');
+      try { d.handle.releasePointerCapture(d.pointerId); } catch (_eRelease) {}
+
+      if (getRowOrderKey() === d.startOrder) return;
+      if (applyPrioritiesFromDomOrder()) markManagerDirty();
+    }
+
+    root.addEventListener('pointerdown', function (e) {
+      if (drag) return;
+      if (typeof e.button === 'number' && e.button !== 0) return;
+      var t = e.target;
+      if (!t || !t.closest) return;
+      var handle = t.closest(dragHandleSelector);
+      if (!handle || !tbody.contains(handle)) return;
+      var row = handle.closest(rowSelector);
+      if (!row) return;
+
+      e.preventDefault();
+
+      // Dragging always works on the true (priority) order, so undo any
+      // click-to-sort column order first.
+      resetColumnSort();
+      resortTableToPriority();
+
+      drag = {
+        row: row,
+        handle: handle,
+        pointerId: e.pointerId,
+        startOrder: getRowOrderKey()
+      };
+      row.classList.add('kitgenix-custom-tabs-for-woocommerce-row-dragging');
+      tbody.classList.add('kitgenix-custom-tabs-for-woocommerce-is-sorting');
+      try { handle.setPointerCapture(e.pointerId); } catch (_eCapture) {}
+    });
+
+    root.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.pointerId) return;
+      e.preventDefault();
+      autoScroll(e.clientY);
+      placeDraggedRow(e.clientY);
+    });
+
+    root.addEventListener('pointerup', endDrag);
+    root.addEventListener('pointercancel', endDrag);
+
     function ensureTemplateToolbar() {
       if (!templates.length) return;
       if (root.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-template-toolbar="1"]')) return;
@@ -800,7 +927,7 @@
       row.setAttribute('data-kitgenix-custom-tabs-for-woocommerce-row', '1');
       row.setAttribute('data-index', String(index));
       row.innerHTML = '' +
-        '<td><strong data-kitgenix-custom-tabs-for-woocommerce-row-title="1">Untitled</strong><div class="kitgenix-custom-tabs-for-woocommerce-tabs-subtitle" data-kitgenix-custom-tabs-for-woocommerce-row-subtitle="1"></div></td>' +
+        '<td><span class="kitgenix-custom-tabs-for-woocommerce-drag-handle dashicons dashicons-menu" data-kitgenix-custom-tabs-for-woocommerce-drag-handle="1" aria-hidden="true" title="' + i18n('dragToReorder', 'Drag to reorder') + '"></span><strong data-kitgenix-custom-tabs-for-woocommerce-row-title="1">Untitled</strong><div class="kitgenix-custom-tabs-for-woocommerce-tabs-subtitle" data-kitgenix-custom-tabs-for-woocommerce-row-subtitle="1"></div></td>' +
         '<td><span class="kitgenix-custom-tabs-for-woocommerce-code" data-kitgenix-custom-tabs-for-woocommerce-row-slug="1">–</span></td>' +
         '<td><span data-kitgenix-custom-tabs-for-woocommerce-row-position="1">0</span></td>' +
         '<td class="kitgenix-custom-tabs-for-woocommerce-actions">' +
@@ -961,9 +1088,16 @@
 
       if (targetSection && managerType === 'global') {
         var targetFieldEl = fields ? fields.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-field="1"]') : null;
-        var target = parseJsonObject(targetFieldEl ? targetFieldEl.value : '') || {};
+        var rawTargetValue = targetFieldEl ? targetFieldEl.value : '';
+        var target = parseJsonObject(rawTargetValue) || {};
         var labels = parseJsonObject(targetFieldEl ? targetFieldEl.getAttribute('data-kitgenix-custom-tabs-for-woocommerce-target-product-labels') : '') || {};
-        populateTargetSection(target, labels);
+        // A brand-new row (never saved, so its hidden target field is still
+        // empty) should default "Also match products in sub-categories" to
+        // checked. A previously-saved row that simply predates this option –
+        // its target JSON already has a non-empty `categories` structure, just
+        // never this specific key – must default to unchecked, so reopening
+        // and resaving an old global tab can't silently widen its matching.
+        populateTargetSection(target, labels, !rawTargetValue);
       }
 
       try { titleEl.focus(); } catch (_e) {}
@@ -995,7 +1129,7 @@
       }).map(function (opt) { return opt.value; });
     }
 
-    function populateTargetSection(target, labels) {
+    function populateTargetSection(target, labels, isNewRow) {
       if (!targetSection) return;
       target = target || {};
       labels = labels || {};
@@ -1012,6 +1146,14 @@
         var values = exclude.length ? exclude : include;
 
         if (modeEl) modeEl.value = mode;
+
+        if ('categories' === dimension) {
+          var includeChildrenEl = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-include-children="1"]');
+          if (includeChildrenEl) {
+            includeChildrenEl.checked = (typeof dim.include_children === 'boolean') ? dim.include_children : !!isNewRow;
+          }
+        }
+
         if (!valuesEl) return;
 
         if ('products' === dimension) {
@@ -1054,6 +1196,11 @@
         var mode = modeEl && modeEl.value === 'exclude' ? 'exclude' : 'include';
         var values = getMultiSelectValues(valuesEl);
         target[dimension][mode] = values;
+
+        if ('categories' === dimension) {
+          var includeChildrenEl = row.querySelector('[data-kitgenix-custom-tabs-for-woocommerce-target-include-children="1"]');
+          target.categories.include_children = !!(includeChildrenEl && includeChildrenEl.checked);
+        }
       });
 
       return target;
@@ -1299,6 +1446,16 @@
 
     var headers = toArray(table.querySelectorAll('th[data-kitgenix-sort-key]'));
     var state = { key: null, dir: 1 };
+
+    // Fired by the drag-and-drop reorder, which always works on priority order.
+    table.addEventListener('kitgenix-sort-reset', function () {
+      state.key = null;
+      state.dir = 1;
+      headers.forEach(function (h) {
+        h.classList.remove('kitgenix-sort-asc', 'kitgenix-sort-desc');
+        h.setAttribute('aria-sort', 'none');
+      });
+    });
 
     function cellValue(row, key) {
       if (key === 'priority') {

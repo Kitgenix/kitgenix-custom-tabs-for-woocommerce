@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Kitgenix Custom Tabs for WooCommerce 2.1.0\n"
+"Project-Id-Version: Kitgenix Custom Tabs for WooCommerce 2.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/kitgenix-custom-tabs-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-13T09:28:01+00:00\n"
+"POT-Creation-Date: 2026-10-30T10:24:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: kitgenix-custom-tabs-for-woocommerce\n"
@@ -80,52 +80,52 @@ msgid "Settings imported (%1$s mode): %2$d global tab(s), %3$d template(s)."
 msgstr ""
 
 #. translators: 1: "global tabs" or "templates", 2: merge or replace, 3: row count imported
-#: includes/Admin/Portability.php:297
+#: includes/Admin/Portability.php:316
 #, php-format
 msgid "CSV import (%1$s, %2$s mode): %3$d row(s) imported."
 msgstr ""
 
-#: includes/Admin/Portability.php:359
+#: includes/Admin/Portability.php:378
 msgid "Import completed using merge mode."
 msgstr ""
 
-#: includes/Admin/Portability.php:360
+#: includes/Admin/Portability.php:379
 msgid "Import completed using replace mode."
 msgstr ""
 
-#: includes/Admin/Portability.php:368
+#: includes/Admin/Portability.php:387
 msgid "Import failed: no file was uploaded."
 msgstr ""
 
-#: includes/Admin/Portability.php:369
+#: includes/Admin/Portability.php:388
 msgid "Import failed: the upload could not be processed."
 msgstr ""
 
-#: includes/Admin/Portability.php:370
+#: includes/Admin/Portability.php:389
 msgid "Import failed: the file is too large."
 msgstr ""
 
-#: includes/Admin/Portability.php:371
+#: includes/Admin/Portability.php:390
 msgid "Import failed: the uploaded file was empty."
 msgstr ""
 
-#: includes/Admin/Portability.php:372
+#: includes/Admin/Portability.php:391
 msgid "Import failed: the file does not contain valid JSON."
 msgstr ""
 
-#: includes/Admin/Portability.php:373
+#: includes/Admin/Portability.php:392
 msgid "Import failed: the file does not contain valid CSV data."
 msgstr ""
 
-#: includes/Admin/Portability.php:374
+#: includes/Admin/Portability.php:393
 msgid "Import failed: this file was not exported from Kitgenix Custom Tabs for WooCommerce."
 msgstr ""
 
-#: includes/Admin/Portability.php:375
+#: includes/Admin/Portability.php:394
 msgid "Export failed: the payload could not be generated."
 msgstr ""
 
-#: includes/Admin/Portability.php:377
+#: includes/Admin/Portability.php:396
 msgid "Import failed."
 msgstr ""
 
@@ -179,228 +179,235 @@ msgid "Copy"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:129
-#: includes/Admin/Product_Tabs.php:281
+#: includes/Admin/Product_Tabs.php:283
 #: includes/Admin/Settings_UI.php:155
-#: includes/Admin/Settings_UI.php:745
+#: includes/Admin/Settings_UI.php:747
 msgid "Move up"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:130
-#: includes/Admin/Product_Tabs.php:282
+#: includes/Admin/Product_Tabs.php:284
 #: includes/Admin/Settings_UI.php:156
-#: includes/Admin/Settings_UI.php:746
+#: includes/Admin/Settings_UI.php:748
 msgid "Move down"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:131
-#: includes/Admin/Product_Tabs.php:284
+#: includes/Admin/Product_Tabs.php:275
 #: includes/Admin/Settings_UI.php:157
-#: includes/Admin/Settings_UI.php:748
-msgid "Disable"
+#: includes/Admin/Settings_UI.php:738
+msgid "Drag to reorder"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:132
-#: includes/Admin/Product_Tabs.php:284
+#: includes/Admin/Product_Tabs.php:286
 #: includes/Admin/Settings_UI.php:158
-#: includes/Admin/Settings_UI.php:748
-msgid "Enable"
+#: includes/Admin/Settings_UI.php:750
+msgid "Disable"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:133
-#: includes/Admin/Product_Tabs.php:276
+#: includes/Admin/Product_Tabs.php:286
 #: includes/Admin/Settings_UI.php:159
-#: includes/Admin/Settings_UI.php:739
+#: includes/Admin/Settings_UI.php:750
+msgid "Enable"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:134
+#: includes/Admin/Product_Tabs.php:278
+#: includes/Admin/Settings_UI.php:160
+#: includes/Admin/Settings_UI.php:741
 msgid "Disabled"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:151
+#: includes/Admin/Product_Tabs.php:152
 msgid "No custom tabs yet. Click Add new tab to create one."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:165
+#: includes/Admin/Product_Tabs.php:166
 msgid "Custom tabs"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:169
+#: includes/Admin/Product_Tabs.php:170
 msgid "Tab settings"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:173
-#: includes/Admin/Settings_UI.php:204
-#: includes/Admin/Settings_UI.php:951
-#: includes/Admin/Settings_UI.php:997
+#: includes/Admin/Product_Tabs.php:174
+#: includes/Admin/Settings_UI.php:205
+#: includes/Admin/Settings_UI.php:953
+#: includes/Admin/Settings_UI.php:999
 msgid "Templates"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:177
+#: includes/Admin/Product_Tabs.php:178
 msgid "Help & FAQ"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:181
+#: includes/Admin/Product_Tabs.php:182
 msgid "Global tabs"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:185
+#: includes/Admin/Product_Tabs.php:186
 msgid "Add new tab"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:192
+#: includes/Admin/Product_Tabs.php:193
 msgid "Add product-specific tabs. These will appear on the product page tabs area."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:195
+#: includes/Admin/Product_Tabs.php:196
 msgid "Use saved templates for repeated snippets like sizing guides, warranty terms, ingredients, or care instructions, then duplicate a tab whenever a product only needs a quick variation."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:198
+#: includes/Admin/Product_Tabs.php:199
 msgid "Tip: Global tabs that apply to every product can be managed under Kitgenix → Custom Tabs → Global Tabs."
-msgstr ""
-
-#: includes/Admin/Product_Tabs.php:214
-#: includes/Admin/Settings_UI.php:477
-msgid "Tab"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:215
 #: includes/Admin/Settings_UI.php:478
-#: includes/Admin/Settings_UI.php:580
-msgid "Slug"
+msgid "Tab"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:216
 #: includes/Admin/Settings_UI.php:479
 #: includes/Admin/Settings_UI.php:581
-msgid "Position"
+msgid "Slug"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:217
-#: includes/Admin/Settings_UI.php:481
+#: includes/Admin/Settings_UI.php:480
 #: includes/Admin/Settings_UI.php:582
+msgid "Position"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:218
+#: includes/Admin/Settings_UI.php:482
+#: includes/Admin/Settings_UI.php:583
 msgid "Actions"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:267
-#: includes/Admin/Settings_UI.php:730
+#: includes/Admin/Product_Tabs.php:268
+#: includes/Admin/Settings_UI.php:731
 msgid "Untitled"
-msgstr ""
-
-#: includes/Admin/Product_Tabs.php:283
-#: includes/Admin/Settings_UI.php:747
-msgid "Edit"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:285
 #: includes/Admin/Settings_UI.php:749
+msgid "Edit"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:287
+#: includes/Admin/Settings_UI.php:751
 msgid "Remove"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:316
-#: includes/Admin/Settings_UI.php:863
+#: includes/Admin/Product_Tabs.php:318
+#: includes/Admin/Settings_UI.php:865
 msgid "Edit Tab"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:317
-#: includes/Admin/Settings_UI.php:864
+#: includes/Admin/Product_Tabs.php:319
+#: includes/Admin/Settings_UI.php:866
 msgid "Close"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:325
-#: includes/Admin/Settings_UI.php:872
+#: includes/Admin/Product_Tabs.php:327
+#: includes/Admin/Settings_UI.php:874
 msgid "Tab title"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:326
-#: includes/Admin/Settings_UI.php:873
+#: includes/Admin/Product_Tabs.php:328
+#: includes/Admin/Settings_UI.php:875
 msgid "Title for tab"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:330
-#: includes/Admin/Settings_UI.php:891
+#: includes/Admin/Product_Tabs.php:332
+#: includes/Admin/Settings_UI.php:893
 msgid "Tab content"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:336
+#: includes/Admin/Product_Tabs.php:338
 msgid "Advanced settings"
-msgstr ""
-
-#: includes/Admin/Product_Tabs.php:342
-#: includes/Admin/Settings_UI.php:879
-msgid "Hide title inside tab content"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:344
 #: includes/Admin/Settings_UI.php:881
+msgid "Hide title inside tab content"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:346
+#: includes/Admin/Settings_UI.php:883
 msgid "The tab still shows this title in the tab bar; this only hides the heading repeated inside the panel."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:347
-#: includes/Admin/Settings_UI.php:884
+#: includes/Admin/Product_Tabs.php:349
+#: includes/Admin/Settings_UI.php:886
 msgid "Tab position"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:350
-#: includes/Admin/Settings_UI.php:887
+#: includes/Admin/Product_Tabs.php:352
+#: includes/Admin/Settings_UI.php:889
 msgid "Learn about positioning"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:354
-#: includes/Admin/Settings_UI.php:896
+#: includes/Admin/Product_Tabs.php:356
+#: includes/Admin/Settings_UI.php:898
 msgid "Tab nickname (optional)"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:355
-#: includes/Admin/Settings_UI.php:897
+#: includes/Admin/Product_Tabs.php:357
+#: includes/Admin/Settings_UI.php:899
 msgid "Nickname for tab"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:358
 #: includes/Admin/Product_Tabs.php:360
-#: includes/Admin/Settings_UI.php:900
+#: includes/Admin/Product_Tabs.php:362
 #: includes/Admin/Settings_UI.php:902
+#: includes/Admin/Settings_UI.php:904
 msgid "Tab slug"
-msgstr ""
-
-#: includes/Admin/Product_Tabs.php:361
-#: includes/Admin/Settings_UI.php:903
-msgid "Generate from title"
 msgstr ""
 
 #: includes/Admin/Product_Tabs.php:363
 #: includes/Admin/Settings_UI.php:905
+msgid "Generate from title"
+msgstr ""
+
+#: includes/Admin/Product_Tabs.php:365
+#: includes/Admin/Settings_UI.php:907
 msgid "Allowed: letters, numbers, and hyphens."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:374
-#: includes/Admin/Settings_UI.php:920
+#: includes/Admin/Product_Tabs.php:376
+#: includes/Admin/Settings_UI.php:922
 msgid "Cancel"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:375
-#: includes/Admin/Settings_UI.php:921
+#: includes/Admin/Product_Tabs.php:377
+#: includes/Admin/Settings_UI.php:923
 msgid "Done"
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:389
+#: includes/Admin/Product_Tabs.php:391
 msgid "Custom Tabs is turned off in Settings; the save was skipped."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:394
+#: includes/Admin/Product_Tabs.php:396
 msgid "Post being saved was not a product; no tab data applied."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:399
+#: includes/Admin/Product_Tabs.php:401
 msgid "Current user did not have permission to edit this product; save blocked."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:406
+#: includes/Admin/Product_Tabs.php:408
 msgid "No security token was submitted with the save (likely a cached edit-product page)."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:410
+#: includes/Admin/Product_Tabs.php:412
 msgid "Security token did not match (likely a stale/cached edit-product page)."
 msgstr ""
 
-#: includes/Admin/Product_Tabs.php:423
+#: includes/Admin/Product_Tabs.php:425
 msgid "Submitted tab data was not in the expected format; no tabs were saved for this product."
 msgstr ""
 
@@ -408,552 +415,552 @@ msgstr ""
 msgid "You have reached the maximum number of tabs."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:197
+#: includes/Admin/Settings_UI.php:198
 #: kitgenix-custom-tabs-for-woocommerce.php:433
 msgid "Custom Tabs for WooCommerce"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:203
+#: includes/Admin/Settings_UI.php:204
 #: kitgenix-custom-tabs-for-woocommerce.php:718
 msgid "Settings"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:205
-#: includes/Admin/Settings_UI.php:450
-#: includes/Admin/Settings_UI.php:951
-#: includes/Admin/Settings_UI.php:997
+#: includes/Admin/Settings_UI.php:206
+#: includes/Admin/Settings_UI.php:451
+#: includes/Admin/Settings_UI.php:953
+#: includes/Admin/Settings_UI.php:999
 msgid "Global Tabs"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:206
+#: includes/Admin/Settings_UI.php:207
 msgid "Portability"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:207
+#: includes/Admin/Settings_UI.php:208
 msgid "Log"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:208
+#: includes/Admin/Settings_UI.php:209
 msgid "Support"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:213
-#: includes/Admin/Settings_UI.php:216
+#: includes/Admin/Settings_UI.php:214
+#: includes/Admin/Settings_UI.php:217
 msgid "Search settings"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:216
+#: includes/Admin/Settings_UI.php:217
 msgid "Search settings…"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:218
+#: includes/Admin/Settings_UI.php:219
 msgid "Clear search"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:221
+#: includes/Admin/Settings_UI.php:222
 msgid "Toggle color theme"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:225
+#: includes/Admin/Settings_UI.php:226
 msgid "Kitgenix Hub"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:226
+#: includes/Admin/Settings_UI.php:227
 msgid "Toggle navigation"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:270
+#: includes/Admin/Settings_UI.php:271
 msgid "Help and links"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:274
+#: includes/Admin/Settings_UI.php:275
 msgid "Need Help?"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:275
+#: includes/Admin/Settings_UI.php:276
 msgid "Open the documentation for setup guidance or send us a support request if you need help configuring the plugin."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:277
+#: includes/Admin/Settings_UI.php:278
 msgid "Documentation"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:278
+#: includes/Admin/Settings_UI.php:279
 msgid "Request Support"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:279
+#: includes/Admin/Settings_UI.php:280
 #: kitgenix-custom-tabs-for-woocommerce.php:657
 msgid "Request a Feature"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:286
+#: includes/Admin/Settings_UI.php:287
 msgid "Visit Our Official Facebook Group"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:287
+#: includes/Admin/Settings_UI.php:288
 msgid "Join the Kitgenix community to ask questions, share feedback, and keep up with product updates."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:289
+#: includes/Admin/Settings_UI.php:290
 msgid "Join Group"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:296
+#: includes/Admin/Settings_UI.php:297
 msgid "Follow Us"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:297
+#: includes/Admin/Settings_UI.php:298
 msgid "Keep up with new releases, tutorials, and product news across our channels."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:334
+#: includes/Admin/Settings_UI.php:335
 msgid "General"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:335
+#: includes/Admin/Settings_UI.php:336
 msgid "Control how the custom tabs feature behaves across your store."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:344
+#: includes/Admin/Settings_UI.php:345
 msgid "Enable custom tabs"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:350
+#: includes/Admin/Settings_UI.php:351
 msgid "Enable the custom tabs feature"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:357
+#: includes/Admin/Settings_UI.php:358
 msgid "Max tabs per product"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:358
+#: includes/Admin/Settings_UI.php:359
 msgid "Keeps the product editor fast and prevents accidental huge tab lists."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:367
+#: includes/Admin/Settings_UI.php:368
 msgid "Allow shortcodes"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:373
+#: includes/Admin/Settings_UI.php:374
 msgid "Process shortcodes in tab content on the frontend"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:380
+#: includes/Admin/Settings_UI.php:381
 msgid "Default Tab Position"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:381
+#: includes/Admin/Settings_UI.php:382
 msgid "This value will be auto-filled into the tab position field when creating a new tab."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:382
+#: includes/Admin/Settings_UI.php:383
 msgid "Learn more about arranging tabs"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:387
+#: includes/Admin/Settings_UI.php:388
 msgid "Before description tab"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:388
+#: includes/Admin/Settings_UI.php:389
 msgid "In between Description and Additional Information"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:389
+#: includes/Admin/Settings_UI.php:390
 msgid "In between Additional Information and Reviews"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:390
+#: includes/Admin/Settings_UI.php:391
 msgid "After all default tabs"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:391
+#: includes/Admin/Settings_UI.php:392
 msgid "Custom"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:393
+#: includes/Admin/Settings_UI.php:394
 msgid "Enter a custom position value or choose one of the options above."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:400
+#: includes/Admin/Settings_UI.php:401
 msgid "Default priority step"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:401
+#: includes/Admin/Settings_UI.php:402
 msgid "Each new tab will use base + (index × step) if no priority is set."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:410
+#: includes/Admin/Settings_UI.php:411
 msgid "Hide Tab Heading Inside the Tab"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:416
+#: includes/Admin/Settings_UI.php:417
 msgid "Yes"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:425
-#: includes/Admin/Settings_UI.php:525
+#: includes/Admin/Settings_UI.php:426
+#: includes/Admin/Settings_UI.php:526
 msgid "Save Settings"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:438
+#: includes/Admin/Settings_UI.php:439
 msgid "No global tabs yet. Click Add Tab to create one."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:451
+#: includes/Admin/Settings_UI.php:452
 msgid "These tabs are added to every product. Product-specific tabs (set in the product editor) are added in addition to these."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:467
+#: includes/Admin/Settings_UI.php:468
 msgid "Add Tab"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:471
+#: includes/Admin/Settings_UI.php:472
 msgid "Search global tabs…"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:480
+#: includes/Admin/Settings_UI.php:481
 msgid "Scope"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:538
+#: includes/Admin/Settings_UI.php:539
 msgid "No saved templates yet. Click Add template to create a reusable tab snippet."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:550
+#: includes/Admin/Settings_UI.php:551
 msgid "Tab Templates"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:551
+#: includes/Admin/Settings_UI.php:552
 msgid "Save reusable warranty text, sizing guides, ingredient lists, care instructions, and other snippets here. Product editors and global tabs can then insert these templates in one click and customize them per use."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:567
+#: includes/Admin/Settings_UI.php:568
 msgid "Add template"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:568
+#: includes/Admin/Settings_UI.php:569
 msgid "Templates are editable copies. Inserting one into a product or global tab does not change the saved template."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:573
+#: includes/Admin/Settings_UI.php:574
 msgid "Search templates…"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:579
+#: includes/Admin/Settings_UI.php:580
 msgid "Template"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:624
+#: includes/Admin/Settings_UI.php:625
 msgid "Save Templates"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:696
-#: includes/Admin/Settings_UI.php:723
+#: includes/Admin/Settings_UI.php:697
+#: includes/Admin/Settings_UI.php:724
 msgid "All products"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:700
+#: includes/Admin/Settings_UI.php:701
 msgid "products"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:701
+#: includes/Admin/Settings_UI.php:702
 msgid "categories"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:702
+#: includes/Admin/Settings_UI.php:703
 msgid "tags"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:703
+#: includes/Admin/Settings_UI.php:704
 msgid "types"
 msgstr ""
 
 #. translators: 1: count of excluded items, 2: dimension label (e.g. "categories")
-#: includes/Admin/Settings_UI.php:714
+#: includes/Admin/Settings_UI.php:715
 #, php-format
 msgid "excl. %1$d %2$s"
 msgstr ""
 
 #. translators: 1: count of included items, 2: dimension label (e.g. "categories")
-#: includes/Admin/Settings_UI.php:718
+#: includes/Admin/Settings_UI.php:719
 #, php-format
 msgid "%1$d %2$s"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:726
+#: includes/Admin/Settings_UI.php:727
 msgid "Targeted"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:940
+#: includes/Admin/Settings_UI.php:942
 msgid "Export"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:941
+#: includes/Admin/Settings_UI.php:943
 msgid "JSON keeps everything, including visibility conditions and product targeting rules. CSV is a simple flattened format (title, nickname, slug, priority, enabled, content) for bulk editing in a spreadsheet."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:948
+#: includes/Admin/Settings_UI.php:950
 msgid "Download full JSON export"
 msgstr ""
 
 #. translators: %s: "Global Tabs" or "Templates"
-#: includes/Admin/Settings_UI.php:957
+#: includes/Admin/Settings_UI.php:959
 #, php-format
 msgid "Download %s CSV"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:965
-#: includes/Admin/Settings_UI.php:982
+#: includes/Admin/Settings_UI.php:967
+#: includes/Admin/Settings_UI.php:984
 msgid "Import JSON"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:966
+#: includes/Admin/Settings_UI.php:968
 msgid "Import a JSON export from this plugin. Choose a file to preview what it contains before importing."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:973
+#: includes/Admin/Settings_UI.php:975
 msgid "JSON file"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:976
-#: includes/Admin/Settings_UI.php:1000
+#: includes/Admin/Settings_UI.php:978
+#: includes/Admin/Settings_UI.php:1002
 msgid "Import mode"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:978
+#: includes/Admin/Settings_UI.php:980
 msgid "Replace current settings"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:979
+#: includes/Admin/Settings_UI.php:981
 msgid "Merge into current settings"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:988
-#: includes/Admin/Settings_UI.php:1006
+#: includes/Admin/Settings_UI.php:990
+#: includes/Admin/Settings_UI.php:1008
 msgid "Import CSV"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:989
+#: includes/Admin/Settings_UI.php:991
 msgid "Import a CSV file (matching the export column headers) into Global Tabs or Templates. Visibility and targeting rules aren't part of CSV and are left untouched on any matching existing rows."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:996
+#: includes/Admin/Settings_UI.php:998
 msgid "Import into"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:998
+#: includes/Admin/Settings_UI.php:1000
 msgid "CSV file"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1002
+#: includes/Admin/Settings_UI.php:1004
 msgid "Replace"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1003
+#: includes/Admin/Settings_UI.php:1005
 msgid "Merge"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1021
+#: includes/Admin/Settings_UI.php:1023
 msgid "Copy plugin link:"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1028
+#: includes/Admin/Settings_UI.php:1030
 msgid "Support Kitgenix"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1029
+#: includes/Admin/Settings_UI.php:1031
 msgid "Help us keep building"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1030
+#: includes/Admin/Settings_UI.php:1032
 msgid "Custom Tabs For WooCommerce adds unlimited per-product and global tabs to your product pages, with drag-to-reorder ordering and no subscription or locked-away Pro version. It is built and maintained by one person in their own time, and donations are what keep it supported through every new WooCommerce release."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1033
+#: includes/Admin/Settings_UI.php:1035
 msgid "Donate with PayPal"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1037
+#: includes/Admin/Settings_UI.php:1039
 msgid "Donations are entirely optional. Kitgenix plugins keep working whether you donate or not."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1044
+#: includes/Admin/Settings_UI.php:1046
 msgid "Leave a review"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1048
+#: includes/Admin/Settings_UI.php:1050
 msgid "Read the docs"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1052
+#: includes/Admin/Settings_UI.php:1054
 msgid "Copy plugin link"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1065
+#: includes/Admin/Settings_UI.php:1067
 msgid "Event log cleared."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1066
-#: includes/Admin/Settings_UI.php:1075
+#: includes/Admin/Settings_UI.php:1068
+#: includes/Admin/Settings_UI.php:1077
 msgid "Dismiss"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1074
+#: includes/Admin/Settings_UI.php:1076
 msgid "Log retention setting saved."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1091
+#: includes/Admin/Settings_UI.php:1093
 msgid "Activity Log"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1092
+#: includes/Admin/Settings_UI.php:1094
 msgid "A record of recent plugin events. Entries show the timestamp, context, outcome, and a plain-English note. IP addresses and sensitive data are never stored here."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1098
+#: includes/Admin/Settings_UI.php:1100
 msgid "Log entries older than the selected period are removed automatically."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1098
+#: includes/Admin/Settings_UI.php:1100
 msgid "Auto-delete logs after"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1100
+#: includes/Admin/Settings_UI.php:1102
 msgid "7 days"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1101
+#: includes/Admin/Settings_UI.php:1103
 msgid "14 days"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1102
+#: includes/Admin/Settings_UI.php:1104
 msgid "30 days"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1104
+#: includes/Admin/Settings_UI.php:1106
 msgid "Save"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1106
+#: includes/Admin/Settings_UI.php:1108
 msgid "Clear all log entries?"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1106
+#: includes/Admin/Settings_UI.php:1108
 msgid "Clear log"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1115
+#: includes/Admin/Settings_UI.php:1117
 msgid "No events logged yet"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1116
+#: includes/Admin/Settings_UI.php:1118
 msgid "Activity will appear here as it happens."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1122
+#: includes/Admin/Settings_UI.php:1124
 msgid "Search log…"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1129
+#: includes/Admin/Settings_UI.php:1131
 msgid "Time"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1130
+#: includes/Admin/Settings_UI.php:1132
 msgid "Context"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1131
+#: includes/Admin/Settings_UI.php:1133
 msgid "Outcome"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1132
+#: includes/Admin/Settings_UI.php:1134
 msgid "Note"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1145
+#: includes/Admin/Settings_UI.php:1147
 #: includes/Core/Event_Log.php:154
 msgid "Unknown time"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1171
+#: includes/Admin/Settings_UI.php:1173
 msgid "No matching log entries"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1178
+#: includes/Admin/Settings_UI.php:1180
 msgid "Category"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1179
+#: includes/Admin/Settings_UI.php:1181
 msgid "What it means"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1180
+#: includes/Admin/Settings_UI.php:1182
 msgid "Action needed?"
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1186
+#: includes/Admin/Settings_UI.php:1188
 msgid "Plugin settings were saved successfully."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1187
+#: includes/Admin/Settings_UI.php:1189
 msgid "None."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1191
+#: includes/Admin/Settings_UI.php:1193
 msgid "Custom Tabs was turned off in Settings, so a product save was skipped and existing tabs were left untouched."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1192
+#: includes/Admin/Settings_UI.php:1194
 msgid "None, unless you expected tabs to save – check that Custom Tabs is enabled in Settings."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1196
+#: includes/Admin/Settings_UI.php:1198
 msgid "A saved post was not a product, so no tab data applied."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1197
+#: includes/Admin/Settings_UI.php:1199
 msgid "None – this is expected on non-product screens."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1201
+#: includes/Admin/Settings_UI.php:1203
 msgid "The user saving the product did not have permission to edit it, so the tab save was blocked."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1202
+#: includes/Admin/Settings_UI.php:1204
 msgid "Genuine issue if it repeats for a user who should have access – check their role and capabilities."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1206
+#: includes/Admin/Settings_UI.php:1208
 msgid "The security (nonce) token was missing or stale. Most common on a cached or long-open product edit page."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1207
+#: includes/Admin/Settings_UI.php:1209
 msgid "Usually a false positive – NOT necessarily a problem. Reload the product edit page and save again. If frequent, exclude wp-admin from page caching."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1211
+#: includes/Admin/Settings_UI.php:1213
 msgid "The submitted tab data was not in the expected format, so nothing was saved."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1212
+#: includes/Admin/Settings_UI.php:1214
 msgid "If this repeats, check for a plugin or theme conflict on the product edit screen."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1216
+#: includes/Admin/Settings_UI.php:1218
 msgid "A settings value was outside its allowed range and was automatically adjusted back into range."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1217
+#: includes/Admin/Settings_UI.php:1219
 msgid "None – this is a safeguard, not an error."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1230
-#: includes/Admin/Settings_UI.php:1240
+#: includes/Admin/Settings_UI.php:1232
+#: includes/Admin/Settings_UI.php:1242
 msgid "Permission denied."
 msgstr ""
 
-#: includes/Admin/Settings_UI.php:1256
+#: includes/Admin/Settings_UI.php:1258
 #: includes/Core/Event_Log.php:177
 msgid "Plugin settings were saved via the admin settings page."
 msgstr ""
@@ -1035,19 +1042,23 @@ msgstr ""
 msgid "Search products&hellip;"
 msgstr ""
 
-#: includes/Admin/Tab_Modal_Fields.php:114
+#: includes/Admin/Tab_Modal_Fields.php:105
+msgid "Also match products in sub-categories"
+msgstr ""
+
+#: includes/Admin/Tab_Modal_Fields.php:120
 msgid "Products"
 msgstr ""
 
-#: includes/Admin/Tab_Modal_Fields.php:115
+#: includes/Admin/Tab_Modal_Fields.php:121
 msgid "Categories"
 msgstr ""
 
-#: includes/Admin/Tab_Modal_Fields.php:116
+#: includes/Admin/Tab_Modal_Fields.php:122
 msgid "Tags"
 msgstr ""
 
-#: includes/Admin/Tab_Modal_Fields.php:117
+#: includes/Admin/Tab_Modal_Fields.php:123
 msgid "Product types"
 msgstr ""
 
@@ -1091,11 +1102,11 @@ msgstr ""
 msgid "Event recorded – no further detail is mapped for this code."
 msgstr ""
 
-#: includes/Core/Settings.php:258
+#: includes/Core/Settings.php:315
 msgid "Max tabs value was outside the allowed range (1–50) and was adjusted back into range."
 msgstr ""
 
-#: includes/Core/Settings.php:268
+#: includes/Core/Settings.php:325
 msgid "Priority step value was below the minimum of 1 and was adjusted back into range."
 msgstr ""
 
